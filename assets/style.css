@@ -1,0 +1,335 @@
+/* Rest de base */
+
+body {
+    margin:0
+}
+
+/* Menu */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FFEEE8
+}
+
+navbar {
+  display: flex;
+  align-items: center;
+}
+
+navbar a {
+  margin-right: 20px;
+  color: #3A2F2F;
+  font-size: 16px;
+  font-family: Noto Sans, sans sérif;
+}
+
+.login a {
+  background-color: #A84C27;
+  color: #FFF9F7;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* Généralité du texte */
+
+body {
+  color: #3A2F2F;
+  font-family: Noto Sans, sans-serif; 
+  font-size : 16px
+}
+
+h1 {
+  font-family: Playfair Display, sérif;
+  font-size: 30px;
+}
+
+h2 { font-family : Playfair Display, sérif;
+   font-size: 24px}
+
+/* Généralité couleurs */
+
+body {
+  background-color :#FFF9F7
+}
+
+/* Bannière */
+
+.pub {
+  position: relative;
+  height: 250px;
+  background-image: url("../Sources/Fond page d'accueil.jpeg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pub::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.pub-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  padding: 0 20px;
+  text-align: center;
+  color: #FFF9F7;
+}
+
+.pub-content h1 {
+  font-size: 36px;
+}
+
+.pub-content p {
+  font-weight: bold;
+}
+
+.pub-content button {
+  background-color: #A84C27;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-width: 0;
+  color: #FFF9F7;
+  font-weight: 550;
+}
+
+button:hover {
+  background-color:#74351C
+}
+
+/* Description */
+
+.description {
+  display: flex;
+  background-color: #FFF9F7;
+  justify-content: space-between;
+  height: 250px;
+
+}
+
+.description-content {
+  position : relative;
+  max-width: 500px;
+  padding: 10px 200px;
+  text-align: center
+}
+
+.description img {
+  padding: 20px 70px;
+  width: 300px;
+  height: 200px;
+  
+}
+
+
+/*qualité*/ 
+
+.qualite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color : #FFEEE8;
+  height:250px;
+}
+
+.cards {
+  display:flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.card1, .card2, .card3 {
+  background-color:#FFF9F7;
+  padding: 0px 20px;
+  margin: 0px 80px;
+  border-radius: 6px;
+  text-align: center;
+  max-width: 200px;
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25)
+}
+
+
+.qualite h2 {
+  font-size: 18px;
+  font-weight: 550
+}
+
+.icone { 
+  display:flex;
+justify-content: center;
+  margin-top: 5px;
+  color: #A84C27;
+}
+
+.icone svg {
+width: 25px;
+height: 25px;
+color: #A84C27
+}
+
+/*avis*/
+
+.avis {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  height: 250px;
+  background-color: #FFF9F7
+}
+
+.avis-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.avis1, .avis2, .avis3 {
+  background-color: #FFEEE8;
+  padding: 10px 20px;
+  margin: 20px 80px;
+  border-radius: 6px; 
+  max-width: 250px;
+  text-align: center;
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25)
+}
+
+.stars {
+  display: flex;
+  flex-direction: row;
+  gap: 2px
+}
+
+.stars svg {
+  width: 16px;
+  height:16px;
+  color: #FDC84D
+}
+
+.avis-content span {
+  font-style: italic;
+  font-size: 14px; 
+  
+}
+
+
+
+/* footer */
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items : center; 
+  background-color:#FFEEE8;
+  height:150px
+}
+
+.mentions {
+  display: flex; 
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 70px;
+}
+
+.mentions a {
+  color : #3A2F2F;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.horaires {
+  display : flex;
+  flex-direction: column;
+  margin-top: 10px;
+  margin-left:70px;
+}
+
+.horaires p {
+  margin-top:0px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.horaires-content span {
+  margin-top: 20px;
+  font-style: italic;
+  font-size: 12px
+}
+
+.horaires h2 {
+  margin-top: 10px;
+  margin-bottom:10px;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+/* Page des menus */ 
+
+.menus-content img { 
+  width: 400px;
+  height: 250px;
+  border-top-left-radius: 6px;
+  border-top-right-radius:6px;
+}
+
+.card-content { 
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  
+}
+
+.menus h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom:  20px;
+}
+
+.menus-content {
+  display: flex; 
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.menu { 
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  background-color: #FFEEE8;
+  border-radius: 6px;
+  margin-bottom:50px;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.25);
+}
+
+.menu p { 
+  max-width: 350px;
+ text-align: justify;
+ margin-left: 20px}
+
+.menu h2 {
+  text-align : center;
+}
+
+.menu a {
+  display: block;
+  color : #3A2F2F;
+  font-size: 14px; 
+  margin-right: 10px;
+  text-align: right;
+  margin-top: auto;
+}
+
+.menu svg {
+  width: 15px;
+  height:15px;
+  color: #3A2F2F;
+}
+
+.personnes {
+  display: flex;
+  align-items: center;
+}
