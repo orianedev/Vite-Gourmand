@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
+    <head>
         <meta charset="UTF-8">
         <title> Page d'accueil </title>
         <link rel="stylesheet" href="../assets/style.css">
-   </head>
+    </head>
 
-   <body>
+    
+
+    <body>
         <header class="navbar">
             <img src="../Sources/Logo.jpeg" width="50"height="50" alt="Logo">
     
@@ -18,15 +20,23 @@
 
         </header>
 
-            <div class="pub"> 
-                <div class="pub-content">
-                <h1> Espace de commandes </h1>
-                <p> <em>Réalisez vos commandes en quelques clics </em> </p>
-                </div>
-            </div>
-
         <main>
+            <form action="" method="POST">
+                <fieldset>
+                    <legend> Se connecter </legend>
+                    <div>
+                        <label for="Email"> Email </label>
+                        <input id="Email" name="Email" type="email">
+                    </div>
 
+                    <div>
+                        <label for="password"> Mot de Passe </label>
+                        <input id="password" name="password" type="password">
+                    </div>
+
+                    <a href="passwordforget.html"> Mot de passe oublié </a>
+                </fieldset>
+            </form>
         </main>
 
         <footer> 
@@ -48,8 +58,5 @@
         
             </footer>
 
-   </body>
-
-
-
+    </body>
 </html>
