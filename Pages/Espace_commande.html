@@ -26,8 +26,92 @@
             </div>
 
         <main>
+            <div class="infos">
+                <h2> Informations personnelles </h2>
+                <div class="infos-content">
+                    <form action="" method="post">
+                        <div>
+                            <label for="name"> Nom :</label>
+                            <input id="name" name="name" type="text" required autocomplete="name">
+                        </div>
+                        <br>
+                        <div>
+                            <label for="firstname"> Prénom :</label>
+                            <input id="firstname" name="firstname" type="text" size="15" required>
+                         </div>
+                         <br>
+                         <div> 
+                            <label for="email"> Email : </label>
+                            <input id="email" name="email" type="email" maxlength="20" required>
+                        </div>
+                        <br>
+                        <div>
+                            <label for="Num"> Numéro de téléphone :</label>
+                            <input id="Num" name="Num" type="tel" maxlength="10" pattern="[0-9]+" required>
+                        </div>
+                        <br>
+                        <div>
+                            <label for="adress"> Adresse postale : </label>
+                            <input id="adress" name="adress" type="text" placeholder="Numéro et rue" required>
+                        </div>
+                        <br>
+                        <div>
+                            <label for="city"> Ville : </label>
+                            <input id="city" name="city" type="text" placeholder="Ville" autocomplete="address-level2" required>
+                        </div>
+                        <br>
+                        <div>
+                            <label for="postal-code"> Code postal :</label>
+                            <input id="postal-code" name="postal-code" type="text" placeholder="Ex: 75000" autocomplete="postal-code" required>
+                        </div>
+                        <br>
+                        <div>
+                            <label for="time"> Date et heure de livraison </label>
+                            <input id="time" name="time" type="datetime"> 
+                        </div>
+                        <input type="submit" value="Valider">
+                    </form>
+                </div>
+            </div>
 
+            <div class="Choix-menu"> 
+                <h2> Titre du menu </h2>
+                <form action="" method="get">
+                    <select>
+                        <option value="Menu classic gourmet"> Menu classic gourmet</option>
+                        <option value="Menu de Nöel"> Menue de Noël</option>
+                        <option value="Buffet hivernal"> Buffet hivernal </option>
+                        <option value="Menu vegan chic"> Menu vegan chic </option>
+                        <option value="Brunch gourmand">Brunch gourmand</option>
+                        <option value="Menu cocktail dinatoire prestige"> Cocktail dinatoire prestige</option>
+                    </select>
+                </form>
+                  <img src="../Sources/Images page menu/cocktail dinatoire.jpeg" alt="Menu 6">
+                <div>
+                    <h2> Menu cocktail dinatoire prestige </h2>
+                    <p> nombres de personnes minimum : 15 </p>
+                    <p> à partir de : 425€ </p>
+                    <p> Une séléction raffinée de pièces salées et sucrées pour un moment d’exception.</p>
+                    <a href="Detail_menus.html"> détails </a>
+                </div>
+            </div>
         </main>
+
+        <aside>
+            <h2> Résumé de ma commande </h2>
+            <form action="" method="get"> 
+                <div>
+                    <label for="menu"> Menu : </label>
+                    <input id="menu" name="menu" type="text">
+                </div>
+                <div>
+                    <p> Nombre de personnes : </p>
+                    <p> Date :</p>
+                    <p> Heure : </p>
+                    <p> Total : </p>
+                </div>
+            </form>
+        </aside>
 
         <footer> 
 
