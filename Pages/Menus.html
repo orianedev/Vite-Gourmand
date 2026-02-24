@@ -21,11 +21,81 @@
 
     </header>
 
-    <main> 
+    <div class="pub"> 
+                <div class="pub-content">
+                <h1> Nos menus </h1>
+                <p> <em>Découvrez nos différents menus </em> </p>
+                </div>
+            </div>
+
+    <main class="mainmenu"> 
+      <div class="toolbar">
+
+      <aside class="sort">
+        <h3> Trier par :  </h3>
+        <div class="sortfilter"> 
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-check-icon lucide-square-check"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+          <p> Prix décroissant </p>
+        </div>
+        <div class="sortfilter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-icon lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+          <p> Prix croissant </p>
+        </div>
+        <div class="sortfilter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-icon lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+          <p> Nouveauté </p>
+        </div>
+      </aside>
+
+      <aside class="filters">
+        <h3> Filtrer par : </h3>
+        <form action="" method="GET">
+          <div class="filter">
+            <label for="pricemax"> Prix maximum : </label>
+            <input name="pricemax" id="pricemax" type="number">
+          </div>
+          <div class="filter">
+            <label for="pricemin"> Fourchette de prix : </label>
+            <select name="pricemin" id="pricemin">
+              <option>  </option>
+              <option> Entre 100€ et 300€ </option>
+              <option> Entre 300€ et 500€</option>
+              <option> Entre 500€ et 700€</option>
+              <option> Plus de 700€</option>
+            </select>
+          </div>
+          <div class="filter">
+            <label for="theme"> Thème : </label>
+            <select name="theme" id="theme">
+              <option> </option>
+              <option> Brunch </option>
+              <option> Buffet </option>
+              <option> Fête </option>
+              <option> Apéritif dinatoire </option>
+              <option> Repas à table </option>
+            </select>
+          </div>
+          <div class="filter">
+            <label for="regime"> Régime alimentaire : </label>
+            <select name="regime" id="regime">
+              <option> </option>
+              <option> Végan </option>
+              <option> Végétarien </option>
+              <option> Sans porc </option>
+              <option> Sans boeuf </option>
+            </select>
+          </div>
+          <div class="filter">
+            <label for="persmin"> Nombre de Personnes min :</label>
+            <input name="persmin" id="persmin" type="number">
+          </div>
+        </form>
+      </aside>
+      </div>
+
+
 
       <div class="menus">
-
-      <h1> Nos menus </h1>
 
         <div class="menus-content"> 
           
@@ -108,8 +178,8 @@
       <aside>
         
       </aside>
-
-      <footer> 
+    </main>
+    <footer> 
 
                 <div class="horaires">
                     <h2> Horaires :</h2>
@@ -127,10 +197,6 @@
                 
         
             </footer>
-      
-      
-    
-    </main>
     
   </body>
 </html>
