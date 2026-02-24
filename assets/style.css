@@ -1,4 +1,4 @@
-/* Rest de base */
+/* Reset de base */
 
 body {
     margin:0
@@ -332,4 +332,157 @@ footer {
 .personnes {
   display: flex;
   align-items: center;
+}
+
+/* Page user */
+
+body {
+    margin: 0;
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #FFF9F7;
+    color: #3A2F2F;
+}
+
+.dashboard {
+    display: flex;
+    padding: 40px 60px;
+    gap: 40px;
+}
+
+.sidebar {
+    width: 250px;
+    height: 450px;
+    background: #FFEEE8;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.profil{
+
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+}
+
+.sidebar button:hover {
+  border: 0;
+  border-radius: 25px;
+}
+
+.sidebar .active {
+    color:#A84C27 ;
+}
+
+
+.content {
+    flex: 1;
+}
+
+.order-card , .order-card-finish {
+    background: #FFEEE8 ;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.order-card h3 , .order-card-finish h3 {
+    font-family: 'Playfair Display', serif;
+}
+
+.timeline {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.timeline span {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #FFF9F7;
+    font-size: 13px;
+}
+
+.timeline .done {
+    background: #6B8E23;
+    color: #FFF9F7;
+}
+
+.timeline .current {
+    background: #A84C27;
+    color: #FFF9F7;
+}
+
+
+.actions {
+    margin-top: 15px;
+}
+
+.btn-primary {
+    background: #A84C27;
+    border: none;
+    padding: 10px 20px;
+    color: #FFF9F7;
+    border-radius: 25px;
+}
+
+.btn-secondary {
+    background: #A84C27;
+    border: none;
+    color: #FFF9F7;
+    padding: 10px 20px;
+    border-radius: 25px;
+    margin-right: 10px;
+}
+
+
+.review textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+.review .stars svg:hover {
+  color: #FDC84D;
+
+}
+
+.infos-card {
+    background: #FFEEE8;
+    padding: 20px;
+
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.label {
+    font-weight: 600;
+    width: 100px;
+}
+
+.value {
+    flex: 1;
+    margin-left: 0;
+}
+
+input {
+    flex: 1;
+    padding : 8px , 12px;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.hidden {
+    display: none;
 }
