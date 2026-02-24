@@ -269,8 +269,13 @@ footer {
 
 /* Page des menus */ 
 
+.mainmenu {
+  display: flex;
+  flex-direction: row;
+}
+
 .menus-content img { 
-  width: 400px;
+  width: 350px;
   height: 250px;
   border-top-left-radius: 6px;
   border-top-right-radius:6px;
@@ -293,12 +298,13 @@ footer {
   display: flex; 
   flex-flow: row wrap;
   justify-content: space-between;
+  margin-top: 50px;
 }
 
 .menu { 
   display: flex;
   flex-direction: column;
-  max-width: 400px;
+  max-width: 350px;
   background-color: #FFEEE8;
   border-radius: 6px;
   margin-bottom:50px;
@@ -306,8 +312,8 @@ footer {
 }
 
 .menu p { 
-  max-width: 350px;
- text-align: justify;
+  max-width: 300px;
+ text-align: start;
  margin-left: 20px}
 
 .menu h2 {
@@ -333,6 +339,56 @@ footer {
   display: flex;
   align-items: center;
 }
+
+.toolbar { 
+  display: flex ;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+  padding : 30px;
+  margin-top: 50px;
+}
+
+.sort { 
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #FFEEE8;
+  border-radius: 6px;
+  margin-bottom:50px;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.25);
+}
+
+.sortfilter {
+  display: flex;
+  align-items: center;
+}
+
+.sortfilter p {
+  margin-left: 8px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #FFEEE8;
+  border-radius: 6px;
+  margin-bottom:50px;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.25);
+}
+
+.filter { 
+  padding: 15px;
+  height: 40px;
+}
+
+.filter select, .filter input {
+  margin-top: 8px;
+}
+
+
 
 /* Page user */
 
