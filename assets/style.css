@@ -195,7 +195,7 @@ color: #A84C27
   border-radius: 6px; 
   max-width: 250px;
   text-align: center;
-  box-shadow: 2px 4px 4px rgba(0,0,0,0.25)
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25);
 }
 
 .stars {
@@ -340,6 +340,111 @@ footer {
   align-items: center;
 }
 
+/* Login */
+
+
+.mainlogin {
+  position: relative;
+  height:80vh;
+  background-image: url("../Sources/Fond page d'accueil.jpeg");
+  background-position: center;
+  background-size: cover;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainlogin::before {
+  content:"";
+  position:absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+
+}
+
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  height: 50%;
+  width: 40%;
+  padding: 40px;
+  text-align: center;
+  border-radius: 25px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  background-color: #FFEEE8;
+  border: 2px solid #3A2F2F
+
+}
+
+.form::before {
+  content:"";
+  position: absolute;
+  inset:0;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 25px;
+}
+
+.form fieldset {
+  height: 60%;
+  width: 50%;
+  display: flex; 
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+  box-shadow:  4px 4px rgba(0,0,0,0.25);
+  border-radius: 25px;
+  border: none;
+
+}
+
+.loginform {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginform a {
+  color:#3A2F2F;
+  font-size: 14px;
+  
+}
+
+.loginbtn input {
+  background-color: #A84C27;
+  border-radius: 25px;
+  align-items: center;
+  padding: 8px;
+  border: none;
+  color: #FFF9F7;
+  width: 110px; 
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
+}
+
+.loginform legend {
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.field {
+  padding: 10px;
+}
+
+.field input {
+  margin-top: 5px;
+  border-radius: 25px;
+  border:none;
+  height: 20px;
+  width: 170px;
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
+
+}
+
 .toolbar { 
   display: flex ;
   flex-direction: column;
@@ -411,10 +516,6 @@ body {
     background: #FFEEE8;
     padding: 20px;
     border-radius: 12px;
-}
-
-.profil{
-
 }
 
 .sidebar ul {
