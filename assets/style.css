@@ -195,7 +195,7 @@ color: #A84C27
   border-radius: 6px; 
   max-width: 250px;
   text-align: center;
-  box-shadow: 2px 4px 4px rgba(0,0,0,0.25)
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25);
 }
 
 .stars {
@@ -336,25 +336,26 @@ footer {
 
 /* Login */
 
-.main {
+
+.mainlogin {
   position: relative;
-  height:100vh;
+  height:80vh;
   background-image: url("../Sources/Fond page d'accueil.jpeg");
   background-position: center;
   background-size: cover;
-
   display:flex;
   justify-content: center;
   align-items: center;
 }
 
-.main::before {
+.mainlogin::before {
   content:"";
   position:absolute;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.45);
 
 }
+
 
 .form {
   display: flex;
@@ -363,15 +364,23 @@ footer {
   position: relative;
   z-index: 1;
   height: 50%;
-  width: 30%;
+  width: 40%;
   padding: 40px;
   text-align: center;
-  border-radius: 20px;
+  border-radius: 25px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   backdrop-filter: blur(10px);
-  background : #FFEEE8;
+  background-color: #FFEEE8;
+  border: 2px solid #3A2F2F
 
+}
 
+.form::before {
+  content:"";
+  position: absolute;
+  inset:0;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 25px;
 }
 
 .form fieldset {
@@ -381,6 +390,51 @@ footer {
   flex-direction: column;
   gap: 20px;
   padding-top: 20px;
+  box-shadow:  4px 4px rgba(0,0,0,0.25);
+  border-radius: 25px;
+  border: none;
+
+}
+
+.loginform {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginform a {
+  color:#3A2F2F;
+  font-size: 14px;
   
+}
+
+.loginbtn input {
+  background-color: #A84C27;
+  border-radius: 25px;
+  align-items: center;
+  padding: 8px;
+  border: none;
+  color: #FFF9F7;
+  width: 110px; 
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
+}
+
+.loginform legend {
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.field {
+  padding: 10px;
+}
+
+.field input {
+  margin-top: 5px;
+  border-radius: 25px;
+  border:none;
+  height: 20px;
+  width: 170px;
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
 
 }
