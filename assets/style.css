@@ -342,26 +342,25 @@ footer {
 
 /* Login */
 
+.loginbody {
+    background: 
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url("../Sources/Fond\ page\ d\'accueil.jpeg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
 .mainlogin {
-  position: relative;
-  height:80vh;
-  background-image: url("../Sources/Fond page d'accueil.jpeg");
-  background-position: center;
-  background-size: cover;
   display:flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  flex:1;
 }
-
-.mainlogin::before {
-  content:"";
-  position:absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
-
-}
-
 
 .form {
   display: flex;
@@ -379,14 +378,6 @@ footer {
   background-color: #FFEEE8;
   border: 2px solid #3A2F2F
 
-}
-
-.form::before {
-  content:"";
-  position: absolute;
-  inset:0;
-  background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 25px;
 }
 
 .form fieldset {
@@ -492,7 +483,6 @@ footer {
 .filter select, .filter input {
   margin-top: 8px;
 }
-
 
 
 /* Page user */
