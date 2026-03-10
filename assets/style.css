@@ -643,3 +643,29 @@ input {
 .hidden {
     display: none;
 }
+
+/* Page admin */
+
+.stat {
+  background:#FFEEE8 ;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.review_employee {
+  background: #FFEEE8 ;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.my_employee {
+  background: #FFEEE8 ;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
