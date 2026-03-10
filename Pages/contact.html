@@ -1,0 +1,88 @@
+<!DOCTYPE html> 
+
+<html> 
+
+  <head>
+    <meta charset="UTF-8">
+    <title> Contact </title>
+    <link rel="stylesheet" href="../assets/style.css">
+  </head>
+
+<body>
+    
+    <header class="navbar">
+        <img src="../Sources/Logo.jpeg" width="50"height="50" alt="Logo">
+
+         <navbar> <a href="../Index.html"> Accueil </a>
+         <a href="Menus.html"> Menus </a>
+         <a href="Contact.html"> Contacts </a>
+         <div class="login"> <a href="login.html"> Connexion </a> </div>
+        </navbar>
+
+    </header>
+
+    <div class="pub"> 
+                <div class="pub-content">
+                <h1> Nous contacter </h1>
+                </div>
+    </div>
+
+    <main class="contact_form">
+        
+        <h2> Formulaire de contact </h2>
+
+        <div class="contact_content">
+            <form action="" method="post">
+                <div class="field">
+                  <label for="name"> Nom : </label>
+                  <input name="name" id="name" type="text" maxlength="25">
+                </div>
+
+                <div class="field">
+                    <label for="firstname"> Prénom : </label>
+                    <input name="firstname" id="firstname" type="text" maxlength="25">
+                </div>
+
+                <div class="field">
+                    <label for="email"> Adresse email : </label>
+                    <input name="email" id="email" type="email" maxlength="30">
+                </div>
+
+                <div class="field"> 
+                    <label for="title"> Objet : </label>
+                    <input name="title" id="title" type="text" maxlength="30">
+                </div>
+
+                <div class="field">
+                    <label for="comment"> Commentaire : </label>
+                    <textarea name="comment" id="comment"> </textarea>
+                </div>
+
+                <button class="btn-primary"> Envoyer </button>
+            </form>
+        </div>
+    </main>
+
+    <footer> 
+
+                <div class="horaires">
+                    <h2> Horaires :</h2>
+                    <div class="horaires-content"> 
+                        <p> Lundi - Vendredi : 9h00 - 18h00</p>
+                        <p> Samedi : 9h00 - 13h00 </p>
+                        <span> Prestations évenementielles disponibles en dehors de ces horaires sur réservation.</span>
+                    </div>
+                </div>
+
+                <div class="mentions">
+                <a href="mentions_legales.php"> Mentions légales</a>
+                <a href="Conditions_de_ventes.php"> Conditions générales de vente </a>
+                </div>
+                
+        
+    </footer>
+
+    
+
+</body>
+</html>
