@@ -643,3 +643,24 @@ input {
 .hidden {
     display: none;
 }
+
+/* Page employé */ 
+
+.employee_filters { 
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #FFEEE8;
+  border-radius: 6px;
+  margin-bottom:50px;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.25);
+  max-height: 250px;
+}
+
+.review_employee {
+  background: #FFEEE8 ;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
