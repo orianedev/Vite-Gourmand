@@ -412,6 +412,7 @@ footer {
   height: 20px;
   width: 170px;
   box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
+  max-width: 200px;
 
 }
 
@@ -612,3 +613,41 @@ input {
 .hidden {
     display: none;
 }
+
+/* Page de contact */
+
+.contact_form { 
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.contact_content {
+  background: #FFEEE8 ;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+}
+
+.field textarea {
+  margin-top: 5px;
+  border-radius: 25px;
+  border:none;
+  height: 20px;
+  width: 170px;
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.25) ;
+}
+
+.field { 
+  display: flex;
+  align-items: center;
+
+}
+
+.field label { 
+  margin-right: 10px;
+}
+

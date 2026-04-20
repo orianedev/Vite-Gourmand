@@ -9,16 +9,8 @@
     
 
     <body>
-        <header class="navbar">
-            <img src="Sources/Logo.jpeg" width="50"height="50" alt="Logo">
-    
-             <navbar> <a href="Index.html"> Accueil </a>
-             <a href="Pages/Menus.html"> Menus </a>
-             <a href="Contact.php"> Contacts </a>
-             <div class="login"> <a href="Pages/login.html"> Connexion </a> </div>
-            </navbar>
 
-        </header>
+        <?php include("../includes/header.php"); ?>
 
          <main>
 
@@ -167,24 +159,7 @@
 
         </main>    
         
-        <footer> 
-
-                <div class="horaires">
-                    <h2> Horaires :</h2>
-                    <div class="horaires-content"> 
-                        <p> Lundi - Vendredi : 9h00 - 18h00</p>
-                        <p> Samedi : 9h00 - 13h00 </p>
-                        <span> Prestations évenementielles disponibles en dehors de ces horaires sur réservation.</span>
-                    </div>
-                </div>
-
-                <div class="mentions">
-                <a href="mentions_legales.php"> Mentions légales</a>
-                <a href="Conditions_de_ventes.php"> Conditions générales de vente </a>
-                </div>
-                
-        
-            </footer>
+        <?php include("../includes/footer.php"); ?>
 
         
     </body>
