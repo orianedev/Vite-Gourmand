@@ -9,16 +9,8 @@
     
 
     <body>
-        <header class="navbar">
-            <img src="../Sources/Logo.jpeg" width="50"height="50" alt="Logo">
-    
-             <navbar> <a href="../Index.html"> Accueil </a>
-             <a href="Menus.html"> Menus </a>
-             <a href="Contact.php"> Contacts </a>
-             <div class="login"> <a href="login.html"> Connexion </a> </div>
-            </navbar>
 
-        </header>
+        <?php include("../includes/header.php"); ?>
 
         <main>
 
@@ -73,3 +65,4 @@
                 </fieldset>
             </form>
         </main>
+        <?php include("../includes/header.php"); ?>
