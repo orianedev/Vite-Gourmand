@@ -25,8 +25,8 @@
                 <h2> Se connecter </h2>
                 <form action="" method="POST">
                     <div class="field">
-                        <label for="Email"> Email : </label>
-                        <input id="Email" name="Email" type="email">
+                        <label for="email"> Email : </label>
+                        <input id="email" name="email" type="email">
                     </div>
 
                     <div class="field">
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="loginbtn">
-                    <a href="Create_account.html"> Créer un compte </a>
+                    <a href="Create_account.php"> Créer un compte </a>
                     </div>
 
                      <a href="passwordforget.html"> Mot de passe oublié ? </a>

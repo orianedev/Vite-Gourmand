@@ -1,3 +1,50 @@
+<?php
+include("../includes/db.php");
+
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $nom = $_POST["name"];
+    $prenom = $_POST["firstname"];
+    $telephone = $_POST["Num"];
+    $email = $_POST["email"];
+    $adresse = $_POST["address"];
+    $ville = $_POST["city"];
+    $codepostal = $_POST["postal-code"];
+    $password = $_POST["password"];
+
+    $adresse_complete = $adresse . " - " . $codepostal;
+
+    $check = $pdo->prepare("SELECT * FROM utilisateur WHERE email = ?");
+    $check->execute([$email]);
+
+    if ($check->rowCount() > 0) {
+
+        $message = "Cet email existe déjà.";
+
+    } else {
+
+        $sql = $pdo->prepare("INSERT INTO utilisateur (email, password, prenom, telephone, ville, pays, adresse_postale, role_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+        $sql->execute([
+            $email,
+            $password,
+            $prenom,
+            $telephone,
+            $ville,
+            "France",
+            $adresse_complete,
+            1
+        ]);
+
+        header("Location: login.php");
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,6 +64,11 @@
             <form acton="" method="post">
                 <fieldset>
                 <legend> Créer un compte </legend>
+
+                <?php if($message != "") : ?>
+                    <p style="color:red; margin-bottom:15px;">
+                    <?= $message ?> </p>
+                <?php endif; ?>
 
                 <div>
                     <label for="name"> Nom : </label>
