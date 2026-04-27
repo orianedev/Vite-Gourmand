@@ -65,4 +65,4 @@
                 </fieldset>
             </form>
         </main>
-        <?php include("../includes/header.php"); ?>
+        <?php include("../includes/footer.php"); ?>
