@@ -6,8 +6,8 @@ $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = trim($_POST["email"]);
-    $password = trim($_POST["password"]);
+    $email = ($_POST["email"]);
+    $password = ($_POST["password"]);
 
     $sql = $pdo->prepare("SELECT * FROM utilisateur WHERE email = ? AND password = ?");
     $sql->execute([$email, $password]);
@@ -76,8 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <form action="" method="POST">
                     <div class="field">
-                        <label for="Email"> Email : </label>
-                        <input id="Email" name="Email" type="email">
+                        <label for="email"> Email : </label>
+                        <input id="email" name="email" type="email">
                     </div>
 
                     <div class="field">
