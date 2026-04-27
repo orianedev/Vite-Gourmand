@@ -1,0 +1,61 @@
+[
+  {
+    "client": {
+      "prenom": "Oriane",
+      "email": "oriane@gmail.com",
+      "ville": "Paris"
+    },
+    "commande": {
+      "menu": "Menu Italien",
+      "date_commande": "2026-04-01",
+      "date_prestation": "2026-04-10",
+      "nombre_personne": 5,
+      "prix_total": 104.50,
+      "statut": "confirmee"
+    },
+    "avis": {
+      "note": 5,
+      "commentaire": "Excellent service"
+    }
+  },
+
+  {
+    "client": {
+      "prenom": "Lucie",
+      "email": "lucie@gmail.com",
+      "ville": "Lyon"
+    },
+    "commande": {
+      "menu": "Menu Vegan Green",
+      "date_commande": "2026-04-02",
+      "date_prestation": "2026-04-15",
+      "nombre_personne": 4,
+      "prix_total": 78.00,
+      "statut": "livree"
+    },
+    "avis": {
+      "note": 4,
+      "commentaire": "Tres bon repas"
+    }
+  },
+
+  {
+    "client": {
+      "prenom": "Mehdi",
+      "email": "mehdi@gmail.com",
+      "ville": "Marseille"
+    },
+    "commande": {
+      "menu": "Menu Couscous",
+      "date_commande": "2026-04-03",
+      "date_prestation": "2026-04-18",
+      "nombre_personne": 6,
+      "prix_total": 131.40,
+      "statut": "en preparation"
+    },
+    "avis": {
+      "note": 5,
+      "commentaire": "Je recommande vivement"
+    }
+  }
+]

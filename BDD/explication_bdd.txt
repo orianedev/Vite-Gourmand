@@ -1,0 +1,28 @@
+Explication du choix des bases de données :
+
+Dans ce projet Vite & Gourmand, deux types de bases de données ont été utilisées :
+
+1. Base relationnelle (MySQL)
+
+La base relationnelle permet de structurer les données principales du site :
+- utilisateurs
+- commandes
+- menus
+- plats
+- avis
+
+Les relations entre les tables garantissent la cohérence des données grâce aux clés primaires et étrangères.
+
+2. Base non relationnelle (MongoDB)
+
+La base non relationnelle permet de stocker des données souples et évolutives sous forme de documents JSON.
+
+Elle est adaptée pour :
+- historiques de commandes
+- avis clients
+- données regroupées client + commande + avis
+- statistiques
+
+Conclusion :
+
+L'utilisation des deux modèles permet de combiner rigueur relationnelle et flexibilité documentaire.
