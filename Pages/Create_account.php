@@ -81,8 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <div>
-                    <label for="Num"> Numéro de téléphone :</label>
-                    <input id="Num" name="Num" type="tel" maxlength="10" pattern="[0-9]+" required>
+                    <label for="num"> Numéro de téléphone :</label>
+                    <input id="num" name="num" type="tel" maxlength="10" pattern="[0-9]+" required>
                 </div>
 
                 <div> 
