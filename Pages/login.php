@@ -6,8 +6,8 @@ $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = $_POST["Email"];
-    $password = $_POST["password"];
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
 
     $sql = $pdo->prepare("SELECT * FROM utilisateur WHERE email = ? AND password = ?");
     $sql->execute([$email, $password]);
