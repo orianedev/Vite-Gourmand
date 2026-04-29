@@ -1,3 +1,72 @@
+<?php
+include("../includes/database.php");
+
+$sql = "SELECT * FROM menu WHERE 1=1";
+
+if(!empty($_GET["pricemax"])) {
+    $pricemax = (int) $_GET["pricemax"];
+    $sql .= " AND (prix_par_personne * nombre_personne_minimum) <= $pricemax";
+}
+
+if(!empty($_GET["persmin"])) {
+    $persmin = (int) $_GET["persmin"];
+    $sql .= " AND nombre_personne_minimum >= $persmin";
+}
+
+if(!empty($_GET["pricemin"])) {
+
+    if($_GET["pricemin"] == "100-300") {
+        $sql .= " AND (prix_par_personne * nombre_personne_minimum) BETWEEN 100 AND 300";
+    }
+
+    elseif($_GET["pricemin"] == "300-500") {
+        $sql .= " AND (prix_par_personne * nombre_personne_minimum) BETWEEN 300 AND 500";
+    }
+
+    elseif($_GET["pricemin"] == "500-700") {
+        $sql .= " AND (prix_par_personne * nombre_personne_minimum) BETWEEN 500 AND 700";
+    }
+
+    elseif($_GET["pricemin"] == "700+") {
+        $sql .= " AND (prix_par_personne * nombre_personne_minimum) > 700";
+    }
+
+}
+
+if(!empty($_GET["theme"])) {
+    $theme = (int) $_GET["theme"];
+    $sql .= " AND theme_id = $theme";
+}
+
+if(!empty($_GET["regime"])) {
+    $regime = (int) $_GET["regime"];
+    $sql .= " AND regime_id = $regime";
+
+}
+
+if(!empty($_GET["tri"])) {
+
+    if($_GET["tri"] == "prix_asc") {
+        $sql .= " ORDER BY prix_par_personne ASC";
+    }
+
+    elseif($_GET["tri"] == "prix_desc") {
+        $sql .= " ORDER BY prix_par_personne DESC";
+    }
+
+    elseif($_GET["tri"] == "recent") {
+        $sql .= " ORDER BY menu_id DESC";
+    }
+
+}
+
+
+$req = $pdo->query($sql);
+$themes = $pdo->query("SELECT * FROM theme");
+$regimes = $pdo->query("SELECT * FROM regime");
+
+?>
+
 <!DOCTYPE html> 
 
 <html> 
@@ -20,148 +89,151 @@
             </div>
 
     <main class="mainmenu"> 
+
       <div class="toolbar">
 
       <aside class="sort">
-        <h3> Trier par :  </h3>
-        <div class="sortfilter"> 
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-check-icon lucide-square-check"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
-          <p> Prix décroissant </p>
-        </div>
+        <h3>Trier par :</h3>
         <div class="sortfilter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-icon lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
-          <p> Prix croissant </p>
+          <a href="Menus.php?<?= http_build_query(array_merge($_GET, ['tri' => 'prix_desc'])) ?>"> Prix décroissant </a>
         </div>
+
         <div class="sortfilter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-icon lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
-          <p> Nouveauté </p>
+          <a href="Menus.php?<?= http_build_query(array_merge($_GET, ['tri' => 'prix_asc'])) ?>"> Prix croissant </a>
+        </div>
+        
+        <div class="sortfilter">
+          <a href="Menus.php?<?= http_build_query(array_merge($_GET, ['tri' => 'recent'])) ?>"> Nouveauté </a>
+        </div>
+
+        <div class="sortfilter">
+          <a href="Menus.php">Réinitialiser</a>
         </div>
       </aside>
 
       <aside class="filters">
         <h3> Filtrer par : </h3>
-        <form action="" method="GET">
+        <form action="Menus.php" method="GET">
           <div class="filter">
             <label for="pricemax"> Prix maximum : </label>
-            <input name="pricemax" id="pricemax" type="number">
+            <input type="number" name="pricemax" id="pricemax" value="<?= $_GET["pricemax"] ?? "" ?>" placeholder="Prix maximum">
           </div>
+
           <div class="filter">
-            <label for="pricemin"> Fourchette de prix : </label>
+            <label for="pricemin">Fourchette de prix :</label>
             <select name="pricemin" id="pricemin">
-              <option>  </option>
-              <option> Entre 100€ et 300€ </option>
-              <option> Entre 300€ et 500€</option>
-              <option> Entre 500€ et 700€</option>
-              <option> Plus de 700€</option>
+              <option value="">Choisir</option>
+              <option value="100-300"<?= ($_GET["pricemin"] ?? "") == "100-300" ? "selected" : "" ?>> Entre 100€ et 300€ </option>
+              <option value="300-500" <?= ($_GET["pricemin"] ?? "") == "300-500" ? "selected" : "" ?>> Entre 300€ et 500€ </option>
+              <option value="500-700" <?= ($_GET["pricemin"] ?? "") == "500-700" ? "selected" : "" ?>> Entre 500€ et 700€ </option>
+              <option value="700+" <?= ($_GET["pricemin"] ?? "") == "700+" ? "selected" : "" ?>> Plus de 700€ </option>
             </select>
           </div>
+
           <div class="filter">
             <label for="theme"> Thème : </label>
             <select name="theme" id="theme">
-              <option> </option>
-              <option> Brunch </option>
-              <option> Buffet </option>
-              <option> Fête </option>
-              <option> Apéritif dinatoire </option>
-              <option> Repas à table </option>
+              <option value="">Choisir</option>
+              <?php while($theme = $themes->fetch()) { ?>
+              <option value="<?= $theme["theme_id"]; ?>" 
+              <?= ($_GET["theme"] ?? "") == $theme["theme_id"] ? "selected" : "" ?>> 
+              <?= $theme["libelle"]; ?> </option>
+              <?php } ?>
             </select>
           </div>
+
           <div class="filter">
             <label for="regime"> Régime alimentaire : </label>
             <select name="regime" id="regime">
-              <option> </option>
-              <option> Végan </option>
-              <option> Végétarien </option>
-              <option> Sans porc </option>
-              <option> Sans boeuf </option>
+               <option value="">Choisir</option>
+               <?php while($regime = $regimes->fetch()) { ?>
+               <option value="<?= $regime["regime_id"]; ?>"
+               <?= ($_GET["regime"] ?? "") == $regime["regime_id"] ? "selected" : "" ?>>
+               <?= $regime["libelle"]; ?>
+               </option>
+               <?php } ?>
             </select>
           </div>
+
           <div class="filter">
             <label for="persmin"> Nombre de Personnes min :</label>
-            <input name="persmin" id="persmin" type="number">
+            <input type="number" name="persmin" id="persmin" value="<?= $_GET["persmin"] ?? "" ?>" placeholder="Nombre minimum de personnes">
           </div>
+            <input type="submit" value="Filtrer">
         </form>
+
       </aside>
       </div>
+      
 
 
 
       <div class="menus">
+      
+      <div class="filtres-actifs">
+
+<h3>Filtres actifs :</h3>
+
+<?php if(!empty($_GET["pricemax"])) { ?>
+<p>• Prix max : <?= $_GET["pricemax"]; ?> €</p>
+<?php } ?>
+
+<?php if(!empty($_GET["persmin"])) { ?>
+<p>• Personnes minimum : <?= $_GET["persmin"]; ?></p>
+<?php } ?>
+
+<?php if(!empty($_GET["theme"])) { ?>
+<?php
+$themeActif = $pdo->query("SELECT libelle FROM theme WHERE theme_id = ".$_GET["theme"]);
+$themeNom = $themeActif->fetch();
+?>
+<p>• Thème : <?= $themeNom["libelle"]; ?></p>
+<?php } ?>
+
+<?php if(!empty($_GET["regime"])) { ?>
+<?php
+$regimeActif = $pdo->query("SELECT libelle FROM regime WHERE regime_id = ".$_GET["regime"]);
+$regimeNom = $regimeActif->fetch();
+?>
+<p>• Régime : <?= $regimeNom["libelle"]; ?></p>
+<?php } ?>
+
+<?php if(!empty($_GET["tri"])) { ?>
+
+<?php if($_GET["tri"] == "prix_asc") { ?>
+<p>• Tri : Prix croissant</p>
+<?php } ?>
+
+<?php if($_GET["tri"] == "prix_desc") { ?>
+<p>• Tri : Prix décroissant</p>
+<?php } ?>
+
+<?php if($_GET["tri"] == "recent") { ?>
+<p>• Tri : Nouveauté</p>
+<?php } ?>
+
+<?php } ?>
+
+</div>
+
 
         <div class="menus-content"> 
-          
-          <div class="menu">
-            <img src="../Sources/Images page menu/menu Noël.jpeg" alt="Menu 1">
-            <div class="card-content">
-            <h2> Menu de Noël </h2>
-            <div class="personnes"> <p> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
-              </svg> minimum : 10 </p> 
-            </div>
-            <p> à partir de : 300€ </p>
-            <p> Un menu de Noël gourmand et raffiné,mêlant traditions et créativité pour sublimer les saveurs de saison. </p>
-            <a href="Detail_menus.html"> détails </a>
-            </div>
+          <?php while($menu = $req->fetch()) { ?>
+
+         <div class="menu">
+          <img src="../Sources/Images page menu/menu Noël.jpeg" alt="menu">
+          <div class="card-content">
+            <h2><?= $menu["titre"]; ?></h2>
+            <p>nombre minimum : <?= $menu["nombre_personne_minimum"]; ?></p>
+            <p>À partir de :<?= $menu["prix_par_personne"] * $menu["nombre_personne_minimum"]; ?> €</p>
+            <p> <?= $menu["prix_par_personne"]; ?> € / personne (minimum <?= $menu["nombre_personne_minimum"]; ?> pers.)</p>
+            <p><?= $menu["description"]; ?></p>
+            <a href="Detail_menus.php?id=<?= $menu["menu_id"]; ?>">détails</a>
           </div>
-
-          <div class="menu">
-            <img src="../Sources/Images page menu/menu gourmet.jpeg" alt="Menu 2">
-            <div class="card-content">
-              <h2> Menu classique gourmet </h2>
-              <p> nombres de personnes minimum : 10 </p>
-              <p> à partir de : 280€ </p>
-              <p> Un menu raffiné et élégant pour toutes les occasions. </p>
-              <a href="Detail_menus.html"> détails </a>
-              </div>
-            </div>
-
-          <div class="menu">
-            <img src="../Sources/Images page menu/buffet hivernal.jpeg" alt="Menu 3">
-            <div class="card-content">
-              <h2> Buffet hivernal </h2>
-              <p> nombres de personnes minimum : 15 </p>
-              <p> à partir de : 375€ </p>
-              <p> Un buffet chaleureux et gourmand, composé de bouchées savoureuses et réconfortantes.</p>
-              <a href="Detail_menus.html"> détails </a>
-              </div>
-           </div>
-
-          
-          <div class="menu">
-            <img src="../Sources/Images page menu/Menu vegan.jpeg" alt="Menu 4">
-            <div class="card-content">
-              <h2> Menu vegan chic </h2>
-              <p> nombres de personnes minimum : 5 </p>
-              <p> à partir de : 150€ </p>
-              <p> Un menu vegan élégant et créatif sublimant les produits de saison à travers des recettes fines.</p>
-              <a href="Detail_menus.html"> détails </a>
-              </div>
-          </div>
-
-          <div class="menu">
-            <img src="../Sources/Images page menu/Brunch.jpeg" alt="Menu 5">
-            <div class="card-content">
-              <h2> Brunch gourmand </h2>
-              <p> nombres de personnes minimum : 6 </p>
-              <p> à partir de : 162€ </p>
-              <p> Un assortiment généreux de douceurs sucrées et salées, mêlant fraîcheur, équilibre et plaisir.</p>
-              <a href="Detail_menus.html"> détails </a>
-             </div>
-          </div>
-
-          <div class="menu">
-            <img src="../Sources/Images page menu/cocktail dinatoire.jpeg" alt="Menu 6">
-            <div class="card-content">
-              <h2> Menu cocktail dinatoire prestige </h2>
-              <p> nombres de personnes minimum : 15 </p>
-              <p> à partir de : 425€ </p>
-              <p> Une séléction raffinée de pièces salées et sucrées pour un moment d’exception.</p>
-              <a href="Detail_menus.html"> détails </a>
-              </div>
-          </div>
-
-          
         </div>
+        <?php } ?>
+          
+       </div>
         
           
       </div>
