@@ -26,7 +26,7 @@
       "ville": "Lyon"
     },
     "commande": {
-      "menu": "Menu Vegan Green",
+      "menu": "Menu Vegan",
       "date_commande": "2026-04-02",
       "date_prestation": "2026-04-15",
       "nombre_personne": 4,
@@ -46,7 +46,7 @@
       "ville": "Marseille"
     },
     "commande": {
-      "menu": "Menu Couscous",
+      "menu": "Menu classic goumet",
       "date_commande": "2026-04-03",
       "date_prestation": "2026-04-18",
       "nombre_personne": 6,

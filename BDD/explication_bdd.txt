@@ -26,3 +26,6 @@ Elle est adaptée pour :
 Conclusion :
 
 L'utilisation des deux modèles permet de combiner rigueur relationnelle et flexibilité documentaire.
+
+Les statistiques et comparaisons de commandes ont été stockées dans une base de données non relationnelle au format JSON. 
+Le modèle utilisé est un modèle documentaire, inspiré du fonctionnement de MongoDB, où les informations client, commande et avis sont regroupées dans un même document.

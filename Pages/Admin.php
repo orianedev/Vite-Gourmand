@@ -1,3 +1,226 @@
+<?php
+
+session_start();
+
+require_once("../includes/database.php");
+
+
+if (!isset($_SESSION["user"])) {
+    header("Location: login.php");
+    exit;
+}
+
+if ($_SESSION["user"]["role"] !== "admin") {
+    header("Location: user.php");
+    exit;
+}
+
+
+$message = "";
+
+if (isset($_POST["create_employee"])) {
+
+    $email = htmlspecialchars(trim($_POST["email"]));
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+
+    $check = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $check->execute([$email]);
+
+    if ($check->rowCount() > 0) {
+
+        $message = "Cet email existe déjà.";
+
+    } else {
+
+        $insert = $pdo->prepare("
+            INSERT INTO users(email, password, role, active)
+            VALUES (?, ?, 'employe', 1)
+        ");
+
+        $insert->execute([$email, $password]);
+
+        
+        $subject = "Création de votre compte";
+
+        $mailMessage = "
+        Bonjour,
+
+        Un compte employé a été créé pour vous sur Vite&Gourmand.
+
+        Votre identifiant : $email
+
+        Pour obtenir votre mot de passe,
+        merci de contacter votre administrateur.
+
+        Cordialement,
+        Vite&Gourmand
+        ";
+
+        $headers = "From: contact@vitegourmand.fr";
+
+        mail($email, $subject, $mailMessage, $headers);
+
+        $message = "Compte employé créé avec succès.";
+    }
+}
+
+
+if (isset($_POST["disable_employee"])) {
+
+    $employee_id = intval($_POST["employee_id"]);
+
+    $update = $pdo->prepare("
+        UPDATE users
+        SET active = 0
+        WHERE id = ?
+        AND role = 'employe'
+    ");
+
+    $update->execute([$employee_id]);
+}
+
+
+
+if (isset($_POST["validate_review"])) {
+
+    $review_id = intval($_POST["review_id"]);
+
+    $update = $pdo->prepare("
+        UPDATE reviews
+        SET status = 'valide'
+        WHERE id = ?
+    ");
+
+    $update->execute([$review_id]);
+}
+
+if (isset($_POST["delete_review"])) {
+
+    $review_id = intval($_POST["review_id"]);
+
+    $delete = $pdo->prepare("
+        DELETE FROM reviews
+        WHERE id = ?
+    ");
+
+    $delete->execute([$review_id]);
+}
+
+
+
+if (isset($_POST["update_status"])) {
+
+    $order_id = intval($_POST["order_id"]);
+    $status = htmlspecialchars($_POST["status"]);
+
+    $update = $pdo->prepare("
+        UPDATE orders
+        SET statut = ?
+        WHERE id = ?
+    ");
+
+    $update->execute([$status, $order_id]);
+
+  
+
+    if ($status === "En attente de restitution du matériel") {
+
+        $getOrder = $pdo->prepare("
+            SELECT users.email
+            FROM orders
+            INNER JOIN users
+            ON orders.user_id = users.id
+            WHERE orders.id = ?
+        ");
+
+        $getOrder->execute([$order_id]);
+
+        $client = $getOrder->fetch();
+
+        if ($client) {
+
+            $subject = "Retour du matériel";
+
+            $mailMessage = "
+            Bonjour,
+
+            Du matériel doit être restitué à Vite&Gourmand.
+
+            Sans retour sous 10 jours ouvrés,
+            des frais de 600 euros seront appliqués.
+
+            Merci de contacter notre société.
+
+            Cordialement,
+            Vite&Gourmand
+            ";
+
+            mail($client["email"], $subject, $mailMessage);
+        }
+    }
+}
+
+
+
+$name = $_GET["Name"] ?? "";
+$statut = $_GET["statut"] ?? "";
+
+$sql = "
+SELECT orders.*, users.email
+FROM orders
+INNER JOIN users
+ON orders.user_id = users.id
+WHERE 1
+";
+
+$params = [];
+
+if (!empty($name)) {
+
+    $sql .= " AND users.email LIKE ?";
+    $params[] = "%$name%";
+}
+
+if (!empty($statut)) {
+
+    $sql .= " AND orders.statut = ?";
+    $params[] = $statut;
+}
+
+$sql .= " ORDER BY orders.created_at DESC";
+
+$request = $pdo->prepare($sql);
+$request->execute($params);
+
+$orders = $request->fetchAll();
+
+
+$employees = $pdo->query("
+    SELECT *
+    FROM users
+    WHERE role = 'employe'
+")->fetchAll();
+
+
+$reviews = $pdo->query("
+    SELECT *
+    FROM reviews
+    WHERE status = 'en_attente'
+")->fetchAll();
+
+
+
+$menus = $pdo->query("
+    SELECT *
+    FROM menus
+")->fetchAll();
+
+$json = file_get_contents("../BDD/mongodb_data.json");
+
+$data = json_decode($json, true);
+
+?>
+
 <!DOCTYPE html> 
 
 <html> 
@@ -6,6 +229,7 @@
     <meta charset="UTF-8">
     <title> Espace administrateur </title>
     <link rel="stylesheet" href="../assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
 <body>
@@ -62,34 +286,32 @@
       </div>
 
        <div class="orders">
-       <article class="order-card">
-        <h3> Menu classic gourmet </h3>
-        <p> Mme Julie Dupont </p>
-        <p> Vendredi 14 mars 2026 à 20h00 </p>
-        <p> 75 personnes </p>
-        <p> 07 67 54 34 32</p>
-        <p> Julie@email.com </p>
-
-      <div class="timeline">
-        <span class="done"> Commandée </span>
-        <span class="done"> Acceptée </span>
-        <span class="current"> En préparation </span>
-        <span> En livraison </span>
-        <span> Livrée </span>
-        <span> Terminée </span>
-        <span> Retour matériel </span>
-      </div>
-
-      <div class="history">
-        <p> Commandée le : 14 février 2026 à 17h30</p>
-        <p> Commande acceptée le : 16 février à 9h00 </p>
-      </div>
-
-      <div class="action">
-        <button class="btn-secondary"> Annuler la commande </button>
-        <button class="btn-primary"> Modifier le statut </button>
-      </div>
-      </article>
+       <?php foreach($orders as $order) : ?>
+        <article class="order-card">
+          <h3><?= htmlspecialchars($order["menu_name"]) ?></h3>
+          <p><?= htmlspecialchars($order["email"]) ?></p>
+          <p><?= htmlspecialchars($order["created_at"]) ?></p>
+          <p><?= htmlspecialchars($order["statut"]) ?></p>
+          <div class="action">
+            <form method="POST">
+              <input type="hidden"
+                   name="order_id"
+                   value="<?= $order["id"] ?>">
+                  <select name="status">
+                    <option>Acceptée</option>
+                    <option>En préparation</option>
+                    <option>En cours de livraison</option>
+                    <option>Livrée</option>
+                    <option>En attente de restitution du matériel</option>
+                    <option>Terminée</option>
+                  </select>
+                  <button class="btn-primary"
+                    type="submit"
+                    name="update_status"> Modifier le statut </button>
+            </form>
+          </div>
+        </article>
+        <?php endforeach; ?>
        </div>
 
 
@@ -120,13 +342,26 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          </div>
-          <p> Marine Payet </p>
-          <p> Super moment passé pour mon anniversaire tout était parfait ! </p>
-          <div class="action">
-          <button class="btn-primary"> Valider l'avis </button>
-          <button class="btn-secondary"> Supprimer l'avis </button>
-          </div>
+          <?php foreach($reviews as $review) : ?>
+            <p><?= htmlspecialchars($review["author"]) ?></p>
+            <p><?= htmlspecialchars($review["commentaire"]) ?></p>
+            <div class="action">
+              <form method="POST">
+                <input type="hidden"
+                   name="review_id" value="<?= $review["id"] ?>">
+                   <button class="btn-primary"
+                    type="submit" name="validate_review"> Valider l'avis </button>
+              </form>
+              
+              <form method="POST">
+                <input type="hidden"
+                   name="review_id" value="<?= $review["id"] ?>">
+                   <button class="btn-secondary"
+                    type="submit" name="delete_review"> Supprimer l'avis </button>
+              </form>
+            </div>
+          </div> 
+          <?php endforeach; ?>
         </div>
 
 
@@ -135,13 +370,23 @@
             <div class="new_employee"> 
             <button class="btn-primary"> Créer un nouvel employé </button>
             </div>
-            <div class="current_employee"> 
-            <h3> Marc Dutronc </h3>
-            <p> Ancienneté : Janvier 2023 </p>
-            <div class="action">
-                <button class="btn-primary"> Révoquer l'accès </button>
+            <?php foreach($employees as $employee) : ?>
+
+            <div class="current_employee">
+              <h3><?= htmlspecialchars($employee["email"]) ?></h3>
+              <p> Statut : <?= $employee["active"] ? "Actif" : "Désactivé" ?> </p>
+              <div class="action">
+                <form method="POST">
+                  <input type="hidden"
+                   name="employee_id"
+                   value="<?= $employee["id"] ?>">
+                   <button class="btn-primary"
+                    type="submit"
+                    name="disable_employee"> Révoquer l'accès </button>
+                </form>
+              </div>
             </div>
-            </div>
+            <?php endforeach; ?>
           </div>
 
 
@@ -172,12 +417,20 @@
              </div>
 
             <div class="stat_resume">
+              <?php foreach($statsMenus as $menu => $total) : ?>
+                <div class="stat_card">
+
+                <h3><?= $menu ?></h3>
+                <p> Nombre de commandes :<?= $total ?> </p>
+                <p> Chiffre d'affaires : <?= $chiffreAffaire[$menu] ?> €</p>
+            </div>
+            <?php endforeach; ?>
             
 
             </div>
 
             <div class="stat_graph">
-
+              <canvas id="chartMenu"></canvas>
             </div>
 
             <div class="stat_array">
@@ -222,6 +475,48 @@
                 
         
             </footer>
+
+<script>
+
+const labels = [
+
+<?php foreach($statsMenus as $menu => $total) : ?>
+
+"<?= $menu ?>",
+
+<?php endforeach; ?>
+
+];
+
+const data = [
+
+<?php foreach($statsMenus as $menu => $total) : ?>
+
+<?= $total ?>,
+
+<?php endforeach; ?>
+
+];
+
+new Chart(document.getElementById('chartMenu'), {
+
+    type: 'bar',
+
+    data: {
+
+        labels: labels,
+
+        datasets: [{
+
+            label: 'Nombre de commandes',
+
+            data: data
+
+        }]
+    }
+});
+
+</script>
 
     
 
