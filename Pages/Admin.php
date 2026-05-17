@@ -108,10 +108,10 @@ if (isset($_POST["delete_review"])) {
 
 
 
-if (isset($_POST["update_status"])) {
+if (isset($_POST["update_statut"])) {
 
     $order_id = intval($_POST["order_id"]);
-    $status = htmlspecialchars($_POST["status"]);
+    $status = htmlspecialchars($_POST["statut"]);
 
     $update = $pdo->prepare("
         UPDATE orders
@@ -119,7 +119,7 @@ if (isset($_POST["update_status"])) {
         WHERE id = ?
     ");
 
-    $update->execute([$status, $order_id]);
+    $update->execute([$statut, $order_id]);
 
   
 
@@ -205,7 +205,7 @@ $employees = $pdo->query("
 $reviews = $pdo->query("
     SELECT *
     FROM reviews
-    WHERE status = 'en_attente'
+    WHERE statut = 'en_attente'
 ")->fetchAll();
 
 
@@ -234,16 +234,7 @@ $data = json_decode($json, true);
 
 <body>
     
-    <header class="navbar">
-        <img src="../Sources/Logo.jpeg" width="50"height="50" alt="Logo">
-
-         <navbar> <a href="../Index.html"> Accueil </a>
-         <a href="Menus.html"> Menus </a>
-         <a href="Contact.php"> Contacts </a>
-         <div class="login"> <a href="login.html"> Connexion </a> </div>
-        </navbar>
-
-    </header>
+    <?php include("../includes/header.php"); ?>
 
     <div class="pub"> 
                 <div class="pub-content">
@@ -297,7 +288,7 @@ $data = json_decode($json, true);
               <input type="hidden"
                    name="order_id"
                    value="<?= $order["id"] ?>">
-                  <select name="status">
+                  <select name="statut">
                     <option>Acceptée</option>
                     <option>En préparation</option>
                     <option>En cours de livraison</option>
@@ -307,7 +298,7 @@ $data = json_decode($json, true);
                   </select>
                   <button class="btn-primary"
                     type="submit"
-                    name="update_status"> Modifier le statut </button>
+                    name="update_statut"> Modifier le statut </button>
             </form>
           </div>
         </article>
@@ -410,7 +401,7 @@ $data = json_decode($json, true);
                     <option value="jour"> Par jour </option> 
                     <option vlaue="semaine"> Par semaine </option>
                     <option value="mois"> Par mois </option>
-                    <options value="année"> Par année </options>
+                    <option value="année"> Par année </options>
                   </select>
                 </form>
                 <button class="btn-primary"> Filtrer </button>
@@ -457,24 +448,7 @@ $data = json_decode($json, true);
 
 
 
-    <footer> 
-
-                <div class="horaires">
-                    <h2> Horaires :</h2>
-                    <div class="horaires-content"> 
-                        <p> Lundi - Vendredi : 9h00 - 18h00</p>
-                        <p> Samedi : 9h00 - 13h00 </p>
-                        <span> Prestations évenementielles disponibles en dehors de ces horaires sur réservation.</span>
-                    </div>
-                </div>
-
-                <div class="mentions">
-                <a href="mentions_legales.php"> Mentions légales</a>
-                <a href="Conditions_de_ventes.php"> Conditions générales de vente </a>
-                </div>
-                
-        
-            </footer>
+  <?php include("../includes/footer.php"); ?>
 
 <script>
 
