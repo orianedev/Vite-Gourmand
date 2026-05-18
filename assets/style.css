@@ -188,7 +188,7 @@ color: #A84C27
   justify-content: space-between;
 }
 
-.avis1, .avis2, .avis3 {
+.avis-card {
   background-color: #FFEEE8;
   padding: 10px 20px;
   margin: 20px 80px;
