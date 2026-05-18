@@ -1,3 +1,82 @@
+<?php
+session_start();
+include("../includes/database.php");
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION["user_id"];
+
+$sqlUser = $pdo->prepare("SELECT * FROM utilisateur WHERE utilisateur_id = ?");
+$sqlUser->execute([$user_id]);
+$user = $sqlUser->fetch();
+
+$menus = $pdo->query("SELECT * FROM menu");
+
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $nom = $_POST["nom"];
+    $prenom = $_POST["prenom"];
+    $email = $_POST["email"];
+    $telephone = $_POST["telephone"];
+    $ville = $_POST["ville"];
+    $adresse = $_POST["adresse_postale"];
+    $code_postal = $_POST["code_postal"];
+
+    $menu_id = $_POST["menu_id"];
+    $date = $_POST["date_prestation"];
+    $heure = $_POST["heure_livraison"];
+    $nb = $_POST["nombre_personne"];
+
+    $prixLivraison = 15;
+
+    $sqlMenu = $pdo->prepare("SELECT * FROM menu WHERE menu_id = ?");
+    $sqlMenu->execute([$menu_id]);
+    $menu = $sqlMenu->fetch();
+
+    $prixMenu = $menu["prix_par_personne"] * $nb;
+    $total = $prixMenu + $prixLivraison;
+
+    $update = $pdo->prepare("
+        UPDATE utilisateur
+        SET nom=?, prenom=?, email=?, telephone=?, ville=?, adresse_postale=?, code_postal=?
+        WHERE utilisateur_id=?
+    ");
+
+    $update->execute([
+        $nom, $prenom, $email, $telephone,
+        $ville, $adresse, $code_postal, $user_id
+    ]);
+
+    $insert = $pdo->prepare("
+        INSERT INTO commande
+        (date_commande, date_prestation, heure_livraison,
+        prix_menu, nombre_personne, prix_livraison,
+        statut, pret_materiel, restitution_materiel,
+        utilisateur_id, menu_id)
+
+        VALUES
+        (CURDATE(), ?, ?, ?, ?, ?, 'en preparation', 0, 0, ?, ?)
+    ");
+
+    $insert->execute([
+        $date,
+        $heure,
+        $prixMenu,
+        $nb,
+        $prixLivraison,
+        $user_id,
+        $menu_id
+    ]);
+
+    $message = "Commande validée avec succès !";
+}
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -21,40 +100,40 @@
             <div class="infos">
                 <h2> Informations personnelles </h2>
                 <div class="infos-content">
-                    <form action="" method="post">
+                    <form method="POST">
                         <div>
                             <label for="name"> Nom :</label>
-                            <input id="name" name="name" type="text" required autocomplete="name">
+                            <input type="text" name="nom" value="<?= $user["nom"] ?>" required>
                         </div>
                         <br>
                         <div>
                             <label for="firstname"> Prénom :</label>
-                            <input id="firstname" name="firstname" type="text" size="15" required>
+                            <input type="text" name="prenom" value="<?= $user["prenom"] ?>" required>
                          </div>
                          <br>
                          <div> 
                             <label for="email"> Email : </label>
-                            <input id="email" name="email" type="email" maxlength="20" required>
+                            <input type="email" name="email" value="<?= $user["email"] ?>" required>
                         </div>
                         <br>
                         <div>
                             <label for="Num"> Numéro de téléphone :</label>
-                            <input id="Num" name="Num" type="tel" maxlength="10" pattern="[0-9]+" required>
+                            <input type="text" name="telephone" value="<?= $user["telephone"] ?>" required>
                         </div>
                         <br>
                         <div>
                             <label for="adress"> Adresse postale : </label>
-                            <input id="adress" name="adress" type="text" placeholder="Numéro et rue" required>
+                            <input type="text" name="adresse_postale" value="<?= $user["adresse_postale"] ?>" required>
                         </div>
                         <br>
                         <div>
                             <label for="city"> Ville : </label>
-                            <input id="city" name="city" type="text" placeholder="Ville" autocomplete="address-level2" required>
+                            <input type="text" name="ville" value="<?= $user["ville"] ?>" required>
                         </div>
                         <br>
                         <div>
                             <label for="postal-code"> Code postal :</label>
-                            <input id="postal-code" name="postal-code" type="text" placeholder="Ex: 75000" autocomplete="postal-code" required>
+                            <input type="text" name="code_postal" value="<?= $user["code_postal"] ?>" required>
                         </div>
                         <br>
                         <div>
@@ -66,46 +145,116 @@
                 </div>
             </div>
 
-            <div class="Choix-menu"> 
-                <h2> Titre du menu </h2>
-                <form action="" method="get">
-                    <select>
-                        <option value="Menu classic gourmet"> Menu classic gourmet</option>
-                        <option value="Menu de Nöel"> Menue de Noël</option>
-                        <option value="Buffet hivernal"> Buffet hivernal </option>
-                        <option value="Menu vegan chic"> Menu vegan chic </option>
-                        <option value="Brunch gourmand">Brunch gourmand</option>
-                        <option value="Menu cocktail dinatoire prestige"> Cocktail dinatoire prestige</option>
+            <div class="Choix-menu">
+                <h2>Choisir votre menu</h2>
+                <form method="post">
+                    <label>Menu :</label>
+                    <select name="menu" id="menuSelect" required>
+                        <option value="">Choisir</option> 
+                        <?php while($m = $menus->fetch()) { ?>
+                        <option value="<?= $m["menu_id"] ?>"
+                        data-prix="<?= $m["prix_par_personne"] ?>"
+                        data-min="<?= $m["nombre_personne_minimum"] ?>"
+                        data-image="<?= $m["image"] ?>"
+                        data-lien="Detail_menus.php?id=<?= $m["menu_id"] ?>">
+                        <?= $m["titre"] ?> </option>
+                        <?php } ?>
                     </select>
+
+                    <div id="apercuMenu">
+                        <img id="imgMenu" src="" width="300">
+                        <p id="prixMenu"></p>
+                        <p id="minMenu"></p>
+                        <a id="lienMenu" href="">Voir détails</a>
+                    </div>
+                    
+                    <label>Nombre de personnes :</label>
+                    <input type="number" id="nb_personne" name="nombre_personne" min="1" required>
+                    <p id="totalMenu"></p>
+                    
+                    <br><br>
+                    
+                    <label>Date de prestation :</label>
+                    <input type="date" id="date" name="date_prestation" required>
+                    
+                    <br><br>
+                    
+                    <label>Heure de livraison :</label>
+                    <input type="time" id="heure" name="heure_livraison" required>
+                    
+                    <br><br>
+                    
+                    <input type="submit" value="Valider commande">
                 </form>
-                  <img src="../Sources/Images page menu/cocktail dinatoire.jpeg" alt="Menu 6">
-                <div>
-                    <h2> Menu cocktail dinatoire prestige </h2>
-                    <p> nombres de personnes minimum : 15 </p>
-                    <p> à partir de : 425€ </p>
-                    <p> Une séléction raffinée de pièces salées et sucrées pour un moment d’exception.</p>
-                    <a href="Detail_menus.html"> détails </a>
-                </div>
             </div>
+
+            <div>
+                <a href="Detail_menus.php?id=1">Voir détails</a>
+            </div>
+
         </main>
 
-        <aside>
-            <h2> Résumé de ma commande </h2>
-            <form action="" method="get"> 
-                <div>
-                    <label for="menu"> Menu : </label>
-                    <input id="menu" name="menu" type="text">
-                </div>
-                <div>
-                    <p> Nombre de personnes : </p>
-                    <p> Date :</p>
-                    <p> Heure : </p>
-                    <p> Total : </p>
-                </div>
-            </form>
-        </aside>
+    <aside>
+        <h2>Résumé de ma commande</h2>
+        
+        <p>Menu : <span id="resume_menu">-</span></p>
+        <p>Nombre de personnes : <span id="resume_nb">-</span> </p>
+        <p>Date : <span id="resume_date">-</span></p>
+        <p>Heure : <span id="resume_heure">-</span></p>
+        <p>Prix menu : <span id="resume_prix">0€</span></p>
+        <p>Livraison : <span id="resume_livraison">15€</span></p>
+        <p><strong>Total : <span id="resume_total">0€</span></strong></p>
+    
+    </aside>
 
        <?php include("../includes/footer.php"); ?>
+   
+<script> 
+
+const select = document.getElementById("menuSelect");
+const nb = document.querySelector('input[name="nombre_personne"]');
+const dateInput = document.querySelector('input[name="date_prestation"]');
+const heureInput = document.querySelector('input[name="heure_livraison"]');
+
+const prixLivraison = 15;
+
+function calculTotal() {
+
+    let option = select.options[select.selectedIndex];
+
+    if (!option || option.value == "") return;
+
+    let prix = parseFloat(option.dataset.prix) || 0;
+    let personnes = parseInt(nb.value) || 0;
+
+    let totalMenu = prix * personnes;
+    let total = totalMenu + prixLivraison;
+
+    
+    document.getElementById("imgMenu").src = option.dataset.image;
+    document.getElementById("prixMenu").innerHTML = "Prix / pers : " + prix + " €";
+    document.getElementById("minMenu").innerHTML = "Min : " + option.dataset.min + " pers";
+    document.getElementById("lienMenu").href = option.dataset.lien;
+
+    document.getElementById("totalMenu").innerHTML =
+        "Total estimé : " + total + " €";
+
+    
+    document.getElementById("resume_menu").innerHTML = option.text;
+    document.getElementById("resume_nb").innerHTML = personnes || "-";
+    document.getElementById("resume_date").innerHTML = dateInput.value || "-";
+    document.getElementById("resume_heure").innerHTML = heureInput.value || "-";
+    document.getElementById("resume_prix").innerHTML = totalMenu + "€";
+    document.getElementById("resume_total").innerHTML = total + "€";
+}
+
+
+select.addEventListener("change", calculTotal);
+nb.addEventListener("input", calculTotal);
+dateInput.addEventListener("input", calculTotal);
+heureInput.addEventListener("input", calculTotal);
+
+</script>
 
    </body>
 
