@@ -218,8 +218,7 @@ $regimeNom = $regimeActif->fetch();
 
 
         <div class="menus-content"> 
-          <?php while($menu = $req->fetch()) { ?>
-
+          <?php while($menu = $req->fetch(PDO::FETCH_ASSOC)) { ?>
          <div class="menu">
           <img src="../Sources/Images page menu/menu Noël.jpeg" alt="menu">
           <div class="card-content">
@@ -228,7 +227,7 @@ $regimeNom = $regimeActif->fetch();
             <p>À partir de :<?= $menu["prix_par_personne"] * $menu["nombre_personne_minimum"]; ?> €</p>
             <p> <?= $menu["prix_par_personne"]; ?> € / personne (minimum <?= $menu["nombre_personne_minimum"]; ?> pers.)</p>
             <p><?= $menu["description"]; ?></p>
-            <a href="Detail_menus.php?id=<?= $menu["menu_id"]; ?>">détails</a>
+            <a href="Detail_menus.php?menu_id=<?= $menu["menu_id"]; ?>">détails</a>
           </div>
         </div>
         <?php } ?>
