@@ -1,44 +1,60 @@
 <?php
+
 session_start();
-include("../includes/db.php");
+
+require_once("../includes/database.php");
 
 $message = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (isset($_POST["connexion"])) {
 
-    $email = ($_POST["email"]);
-    $password = ($_POST["password"]);
+    $email = htmlspecialchars(trim($_POST["email"]));
+    $password = htmlspecialchars(trim($_POST["password"]));
 
-    $sql = $pdo->prepare("SELECT * FROM utilisateur WHERE email = ? AND password = ?");
-    $sql->execute([$email, $password]);
+    $request = $pdo->prepare("
+        SELECT *
+        FROM utilisateur
+        WHERE email = ?
+        AND active = 1
+    ");
 
-    $user = $sql->fetch();
+    $request->execute([$email]);
 
-    if ($user) {
+    $utilisateur = $request->fetch();
 
-        $_SESSION["user_id"] = $user["utilisateur_id"];
-        $_SESSION["prenom"] = $user["prenom"];
-        $_SESSION["role_id"] = $user["role_id"];
+    if ($utilisateur) {
 
-        if ($user["role_id"] == 1) {
-            header("Location: user.php");
-            exit();
-        }
+        if ($password === $utilisateur["password"]) {
 
-        if ($user["role_id"] == 2) {
-            header("Location: employee.php");
-            exit();
-        }
+            $_SESSION["user"] = $utilisateur;
 
-        if ($user["role_id"] == 3) {
-            header("Location: Admin.php");
-            exit();
+            if ($utilisateur["role_id"] == 3) {
+
+                header("Location: Admin.php");
+                exit();
+
+            } elseif ($utilisateur["role_id"] == 2) {
+
+                header("Location: employee.php");
+                exit();
+
+            } else {
+
+                header("Location: user.php");
+                exit();
+            }
+
+        } else {
+
+            $message = "Mot de passe incorrect.";
         }
 
     } else {
-        $message = "Email ou mot de passe incorrect.";
+
+        $message = "Utilisateur introuvable.";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="loginbtn">
-                        <input type="submit" value="Se connecter">
+                        <button type="submit" name="connexion"> Connexion </button>
                     </div>
 
                     <div class="loginbtn">

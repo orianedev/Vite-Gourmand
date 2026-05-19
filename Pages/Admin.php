@@ -4,26 +4,31 @@ session_start();
 
 require_once("../includes/database.php");
 
-
 if (!isset($_SESSION["user"])) {
+
     header("Location: login.php");
-    exit;
+    exit();
 }
 
-if ($_SESSION["user"]["role"] !== "admin") {
+if ($_SESSION["user"]["role_id"] != 3) {
+
     header("Location: user.php");
-    exit;
+    exit();
 }
-
 
 $message = "";
 
 if (isset($_POST["create_employee"])) {
 
     $email = htmlspecialchars(trim($_POST["email"]));
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $password = htmlspecialchars(trim($_POST["password"]));
 
-    $check = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $check = $pdo->prepare("
+        SELECT *
+        FROM utilisateur
+        WHERE email = ?
+    ");
+
     $check->execute([$email]);
 
     if ($check->rowCount() > 0) {
@@ -33,143 +38,67 @@ if (isset($_POST["create_employee"])) {
     } else {
 
         $insert = $pdo->prepare("
-            INSERT INTO users(email, password, role, active)
-            VALUES (?, ?, 'employe', 1)
+            INSERT INTO utilisateur
+            (
+                email,
+                password,
+                nom,
+                prenom,
+                telephone,
+                ville,
+                adresse_postale,
+                code_postal,
+                role_id,
+                active,
+                created_at
+            )
+            VALUES
+            (
+                ?,
+                ?,
+                '',
+                '',
+                '',
+                '',
+                '',
+                NULL,
+                2,
+                1,
+                NOW()
+            )
         ");
 
-        $insert->execute([$email, $password]);
-
-        
-        $subject = "Création de votre compte";
-
-        $mailMessage = "
-        Bonjour,
-
-        Un compte employé a été créé pour vous sur Vite&Gourmand.
-
-        Votre identifiant : $email
-
-        Pour obtenir votre mot de passe,
-        merci de contacter votre administrateur.
-
-        Cordialement,
-        Vite&Gourmand
-        ";
-
-        $headers = "From: contact@vitegourmand.fr";
-
-        mail($email, $subject, $mailMessage, $headers);
+        $insert->execute([
+            $email,
+            $password
+        ]);
 
         $message = "Compte employé créé avec succès.";
     }
 }
-
 
 if (isset($_POST["disable_employee"])) {
 
     $employee_id = intval($_POST["employee_id"]);
 
     $update = $pdo->prepare("
-        UPDATE users
+        UPDATE utilisateur
         SET active = 0
-        WHERE id = ?
-        AND role = 'employe'
+        WHERE utilisateur_id = ?
+        AND role_id = 2
     ");
 
     $update->execute([$employee_id]);
 }
 
-
-
-if (isset($_POST["validate_review"])) {
-
-    $review_id = intval($_POST["review_id"]);
-
-    $update = $pdo->prepare("
-        UPDATE reviews
-        SET status = 'valide'
-        WHERE id = ?
-    ");
-
-    $update->execute([$review_id]);
-}
-
-if (isset($_POST["delete_review"])) {
-
-    $review_id = intval($_POST["review_id"]);
-
-    $delete = $pdo->prepare("
-        DELETE FROM reviews
-        WHERE id = ?
-    ");
-
-    $delete->execute([$review_id]);
-}
-
-
-
-if (isset($_POST["update_statut"])) {
-
-    $order_id = intval($_POST["order_id"]);
-    $status = htmlspecialchars($_POST["statut"]);
-
-    $update = $pdo->prepare("
-        UPDATE orders
-        SET statut = ?
-        WHERE id = ?
-    ");
-
-    $update->execute([$statut, $order_id]);
-
-  
-
-    if ($status === "En attente de restitution du matériel") {
-
-        $getOrder = $pdo->prepare("
-            SELECT users.email
-            FROM orders
-            INNER JOIN users
-            ON orders.user_id = users.id
-            WHERE orders.id = ?
-        ");
-
-        $getOrder->execute([$order_id]);
-
-        $client = $getOrder->fetch();
-
-        if ($client) {
-
-            $subject = "Retour du matériel";
-
-            $mailMessage = "
-            Bonjour,
-
-            Du matériel doit être restitué à Vite&Gourmand.
-
-            Sans retour sous 10 jours ouvrés,
-            des frais de 600 euros seront appliqués.
-
-            Merci de contacter notre société.
-
-            Cordialement,
-            Vite&Gourmand
-            ";
-
-            mail($client["email"], $subject, $mailMessage);
-        }
-    }
-}
-
-
-
 $name = $_GET["Name"] ?? "";
 $statut = $_GET["statut"] ?? "";
 
 $sql = "
-SELECT orders.*, users.email
-FROM orders
-INNER JOIN users
-ON orders.user_id = users.id
+SELECT commande.*, utilisateur.email
+FROM commande
+INNER JOIN utilisateur
+ON commande.utilisateur_id = utilisateur.utilisateur_id
 WHERE 1
 ";
 
@@ -177,49 +106,54 @@ $params = [];
 
 if (!empty($name)) {
 
-    $sql .= " AND users.email LIKE ?";
+    $sql .= " AND utilisateur.email LIKE ?";
     $params[] = "%$name%";
 }
 
 if (!empty($statut)) {
 
-    $sql .= " AND orders.statut = ?";
+    $sql .= " AND commande.statut = ?";
     $params[] = $statut;
 }
-
-$sql .= " ORDER BY orders.created_at DESC";
 
 $request = $pdo->prepare($sql);
 $request->execute($params);
 
 $orders = $request->fetchAll();
 
-
 $employees = $pdo->query("
     SELECT *
-    FROM users
-    WHERE role = 'employe'
+    FROM utilisateur
+    WHERE role_id = 2
 ")->fetchAll();
-
 
 $reviews = $pdo->query("
     SELECT *
-    FROM reviews
-    WHERE statut = 'en_attente'
+    FROM avis
 ")->fetchAll();
-
-
 
 $menus = $pdo->query("
     SELECT *
-    FROM menus
+    FROM menu
 ")->fetchAll();
 
 $json = file_get_contents("../BDD/mongodb_data.json");
 
 $data = json_decode($json, true);
 
+$statsMenus = [];
+$chiffreAffaire = [];
+
+
+$section = $_GET["section"] ?? "commandes";
+
+$sqlMenus = "SELECT * FROM menu";
+$stmtMenus = $pdo->query($sqlMenus);
+$menus = $stmtMenus->fetchAll();
+
 ?>
+
+
 
 <!DOCTYPE html> 
 
@@ -268,26 +202,19 @@ $data = json_decode($json, true);
 
       <section class="content">
 
-      <div class="title"> 
-        <h2> Commandes </h2> 
-        <h2 class="hidden"> Menus </h2>
-        <h2 class="hidden"> Avis </h2>
-        <h2 class="hidden"> Mes employés </h2>
-        <h2 class="hidden"> Statistiques </h2>
-      </div>
-
+      <?php if($section === "commandes") : ?>
        <div class="orders">
        <?php foreach($orders as $order) : ?>
         <article class="order-card">
-          <h3><?= htmlspecialchars($order["menu_name"]) ?></h3>
+          <h3><?= htmlspecialchars($order["menu_id"]) ?></h3>
           <p><?= htmlspecialchars($order["email"]) ?></p>
-          <p><?= htmlspecialchars($order["created_at"]) ?></p>
+          <p><?= htmlspecialchars($order["date_commande"]) ?></p>
           <p><?= htmlspecialchars($order["statut"]) ?></p>
           <div class="action">
             <form method="POST">
               <input type="hidden"
                    name="order_id"
-                   value="<?= $order["id"] ?>">
+                   value="<?= $order["menu_id"] ?>">
                   <select name="statut">
                     <option>Acceptée</option>
                     <option>En préparation</option>
@@ -304,28 +231,84 @@ $data = json_decode($json, true);
         </article>
         <?php endforeach; ?>
        </div>
+       <?php endif; ?>
 
 
+      <?php if($section === "menus") : ?>
+<div class="menus_container">
 
-      <article class="menu"> 
-            <img src="../Sources/Images page menu/menu gourmet.jpeg" alt="Menu 2">
-            <div class="card-content">
-              <h2> Menu classique gourmet </h2>
-              <p> nombres de personnes minimum : 10 </p>
-              <p> à partir de : 280€ </p>
-              <p> Un menu raffiné et élégant pour toutes les occasions. </p>
-              <a href="Detail_menus.html"> Modifier le menu </a>
-              </div>
-            </div>
+<?php foreach($menus as $menu) : ?>
 
-        <div class="action">
-        <button class="btn-primary"> Supprimer </button>
-        </div>
-      </article>
+  <div class="menu_topbar">
+
+    <a href="Create_menu.php"
+       class="btn-primary">
+
+        Créer un menu
+
+    </a>
+
+</div>
+
+<article class="menu">
+
+    <img src="<?= htmlspecialchars($menu["image"]) ?>" 
+         alt="<?= htmlspecialchars($menu["titre"]) ?>">
+
+    <div class="card-content">
+
+        <h2><?= htmlspecialchars($menu["titre"]) ?></h2>
+
+        <p>
+            nombres de personnes minimum :
+            <?= htmlspecialchars($menu["nombre_personne_minimum"]) ?>
+        </p>
+
+        <p>
+            à partir de :
+            <?= htmlspecialchars($menu["prix_par_personne"]) ?>€
+        </p>
+
+        <p>
+            <?= htmlspecialchars($menu["description"]) ?>
+        </p>
+
+        <a href="Detail_menus.php?id=<?= $menu["menu_id"] ?>">
+            Modifier le menu
+        </a>
+
+    </div>
+
+    <div class="action">
+
+        <form method="POST">
+
+            <input type="hidden"
+                   name="menu_id"
+                   value="<?= $menu["menu_id"] ?>">
+
+            <button class="btn-primary"
+                    type="submit"
+                    name="delete_menu">
+
+                Supprimer
+
+            </button>
+
+        </form>
+
+    </div>
+
+</article>
+
+<?php endforeach; ?>
+
+</div>
+      <?php endif; ?>
 
 
     
-
+      <?php if($section === "avis") : ?>
         <div class="review_employee "> 
           <div class="stars"> 
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
@@ -334,19 +317,19 @@ $data = json_decode($json, true);
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
           <?php foreach($reviews as $review) : ?>
-            <p><?= htmlspecialchars($review["author"]) ?></p>
-            <p><?= htmlspecialchars($review["commentaire"]) ?></p>
+            <p><?= htmlspecialchars($review["utilisateur_id"]) ?></p>
+            <p><?= htmlspecialchars($review["description"]) ?></p>
             <div class="action">
               <form method="POST">
                 <input type="hidden"
-                   name="review_id" value="<?= $review["id"] ?>">
+                   name="review_id" value="<?= $review["utilisateur_id"] ?>">
                    <button class="btn-primary"
                     type="submit" name="validate_review"> Valider l'avis </button>
               </form>
               
               <form method="POST">
                 <input type="hidden"
-                   name="review_id" value="<?= $review["id"] ?>">
+                   name="review_id" value="<?= $review["utilisateur_id"] ?>">
                    <button class="btn-secondary"
                     type="submit" name="delete_review"> Supprimer l'avis </button>
               </form>
@@ -354,9 +337,10 @@ $data = json_decode($json, true);
           </div> 
           <?php endforeach; ?>
         </div>
+        <?php endif; ?>
 
 
-
+        <?php if($section === "employes") : ?>
           <div class="my_employee">
             <div class="new_employee"> 
             <button class="btn-primary"> Créer un nouvel employé </button>
@@ -370,7 +354,7 @@ $data = json_decode($json, true);
                 <form method="POST">
                   <input type="hidden"
                    name="employee_id"
-                   value="<?= $employee["id"] ?>">
+                   value="<?= $employee["utilisateur_id"] ?>">
                    <button class="btn-primary"
                     type="submit"
                     name="disable_employee"> Révoquer l'accès </button>
@@ -379,9 +363,10 @@ $data = json_decode($json, true);
             </div>
             <?php endforeach; ?>
           </div>
+          <?php endif; ?>
 
 
-
+        <?php if($section === "statistiques") : ?>
           <div class="stat">
             <div class="stat_filters">
                 <form  action="" method="get">
@@ -428,19 +413,46 @@ $data = json_decode($json, true);
 
             </div>
           </div>
+          <?php endif; ?>
     
       </section>
     
 
     <aside class="sidebar">
-      <ul> 
-      <li class="active"> <button class="btn-primary"> Commandes </button> </li>
-      <li><button class="btn-primary"> Menus </button> </li>
-      <li><button class="btn-primary"> Avis </button></li>
-      <li> <button class="btn-primary"> Mes employés </button></li>
-      <li> <button class="btn-primary"> Statistiques </button></li>
-      </ul>
-    </aside>
+    <ul>
+
+        <li>
+            <a href="Admin.php?section=commandes" class="btn-primary">
+                Commandes
+            </a>
+        </li>
+
+        <li>
+            <a href="Admin.php?section=menus" class="btn-primary">
+                Menus
+            </a>
+        </li>
+
+        <li>
+            <a href="Admin.php?section=avis" class="btn-primary">
+                Avis
+            </a>
+        </li>
+
+        <li>
+            <a href="Admin.php?section=employes" class="btn-primary">
+                Mes employés
+            </a>
+        </li>
+
+        <li>
+            <a href="Admin.php?section=statistiques" class="btn-primary">
+                Statistiques
+            </a>
+        </li>
+
+    </ul>
+</aside>
 
 
       </div>
