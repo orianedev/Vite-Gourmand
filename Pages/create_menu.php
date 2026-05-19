@@ -305,7 +305,7 @@ $regimes = $regimeRequest->fetchAll();
 
             <option value="<?= $theme["theme_id"] ?>">
 
-                <?= htmlspecialchars($theme["nom_theme"]) ?>
+                <?= htmlspecialchars($theme["libelle"]) ?>
 
             </option>
 
@@ -329,7 +329,7 @@ $regimes = $regimeRequest->fetchAll();
 
             <option value="<?= $regime["regime_id"] ?>">
 
-                <?= htmlspecialchars($regime["nom_regime"]) ?>
+                <?= htmlspecialchars($regime["libelle"]) ?>
 
             </option>
 
