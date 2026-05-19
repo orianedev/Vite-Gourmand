@@ -151,6 +151,44 @@ $sqlMenus = "SELECT * FROM menu";
 $stmtMenus = $pdo->query($sqlMenus);
 $menus = $stmtMenus->fetchAll();
 
+
+if(isset($_POST["delete_menu"])) {
+
+    $menu_id = $_POST["menu_id"];
+
+    /* =========================
+       SUPPRIMER LES RELATIONS
+    ========================= */
+
+    $sqlDeletePlat = "DELETE FROM menu_plat
+                      WHERE menu_id = :menu_id";
+
+    $requestDeletePlat = $pdo->prepare($sqlDeletePlat);
+
+    $requestDeletePlat->execute([
+        "menu_id" => $menu_id
+    ]);
+
+    /* =========================
+       SUPPRIMER LE MENU
+    ========================= */
+
+    $sqlDeleteMenu = "DELETE FROM menu
+                      WHERE menu_id = :menu_id";
+
+    $requestDeleteMenu = $pdo->prepare($sqlDeleteMenu);
+
+    $requestDeleteMenu->execute([
+        "menu_id" => $menu_id
+    ]);
+
+    header("Location: Admin.php?section=menus");
+
+    exit;
+}
+
+?>
+
 ?>
 
 
