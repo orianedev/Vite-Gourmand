@@ -1,5 +1,5 @@
 <?php
-include("../includes/db.php");
+include("../includes/database.php");
 
 $message = "";
 
@@ -59,9 +59,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php include("../includes/header.php"); ?>
 
-        <main>
+        <main class="create-account-main">
 
-            <form acton="" method="post">
+            <form action="" method="post" class="create-account-form">
                 <fieldset>
                 <legend> Créer un compte </legend>
 
