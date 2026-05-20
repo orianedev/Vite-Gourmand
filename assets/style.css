@@ -1350,162 +1350,152 @@ RESPONSIVE
 PAGE DETAIL MENU
 ========================================= */
 
-main {
+.detail-layout {
     display: flex;
-    justify-content: space-between;
+    align-items: flex-start;
     gap: 40px;
-    padding: 60px 80px;
-    background-color: #FFF9F5;
+    padding: 60px;
+    background-color: #FFF9F7;
 }
 
 /* =========================================
-BLOC MENU
+GROSSE CARTE MENU
 ========================================= */
 
-.Carte_menu {
-    flex: 2;
-}
-
-.pub-content {
-    background-color: #FFFFFF;
-    border-radius: 14px;
+.detail-main-card {
+    width: 650px;
+    background-color: #FFEEE8;
+    border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom: 40px;
+    box-shadow: 0px 6px 20px rgba(116, 53, 28, 0.12);
+    flex-shrink: 0;
 }
 
-.pub-content img {
+.detail-main-image {
     width: 100%;
-    height: 350px;
+    height: 420px;
     object-fit: cover;
+    display: block;
 }
 
-.pub-content h1 {
-    font-size: 42px;
-    margin-top: 30px;
-    color: #3A2F2F;
+.detail-main-infos {
+    padding: 35px;
 }
 
-.pub-content p {
-    font-size: 17px;
-    color: #5E4B4B;
-    line-height: 1.7;
-}
-
-.pub-content h2 {
-    margin-top: 25px;
+.detail-main-infos h2 {
     color: #A84C27;
-    font-size: 28px;
+    font-size: 38px;
+    margin-bottom: 20px;
+    font-family: "Playfair Display", serif;
 }
 
-.pub-content > *:not(img) {
-    padding-left: 40px;
-    padding-right: 40px;
+.detail-main-infos p {
+    color: #3A2F2F;
+    font-size: 20px;
+    line-height: 1.6;
 }
 
 /* =========================================
-CARTES PLATS
+LISTE DES PLATS
 ========================================= */
 
-.detail {
-    background-color: #FFFFFF;
-    border-radius: 14px;
+.detail-plats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.detail-plat-card {
+    width: 320px;
+    background-color: #FFEEE8;
+    border-radius: 22px;
     overflow: hidden;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0px 4px 15px rgba(116, 53, 28, 0.08);
     transition: transform 0.2s ease;
 }
 
-.detail:hover {
+.detail-plat-card:hover {
     transform: translateY(-4px);
 }
 
-.detail img {
+.detail-plat-card h2 {
+    color: #A84C27;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 25px 25px 10px 25px;
+}
+
+.detail-plat-card h3 {
+    color: #3A2F2F;
+    font-size: 32px;
+    padding: 0px 25px 20px 25px;
+    font-family: "Playfair Display", serif;
+}
+
+.detail-plat-card img {
     width: 100%;
     height: 220px;
     object-fit: cover;
-}
-
-.detail h2 {
-    color: #A84C27;
-    font-size: 18px;
-    margin: 20px 25px 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.detail h3 {
-    font-size: 28px;
-    margin: 0 25px 20px;
-    color: #3A2F2F;
+    display: block;
 }
 
 /* =========================================
-FORMULAIRE / ASIDE
+FORMULAIRE COMMANDE
 ========================================= */
 
-.filters {
-    flex: 1;
-    background-color: #FFFFFF;
+.detail-commande-box {
+    width: 350px;
+    background-color: #FFEEE8;
     padding: 35px;
-    border-radius: 14px;
-    height: fit-content;
-    position: sticky;
-    top: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 25px;
+    box-shadow: 0px 6px 20px rgba(116, 53, 28, 0.08);
 }
 
-.filters form {
+.detail-commande-box form {
     display: flex;
     flex-direction: column;
 }
 
-.filters label {
-    font-weight: 600;
-    margin-bottom: 8px;
+.detail-commande-box label {
     color: #3A2F2F;
-}
-
-.filters input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #D8C7BE;
-    margin-top: 8px;
-    font-size: 15px;
-    background-color: #FFF9F5;
-}
-
-.filters input:focus {
-    outline: none;
-    border: 1px solid #A84C27;
-}
-
-.filters input[readonly] {
-    background-color: #F3ECE8;
+    font-size: 17px;
     font-weight: bold;
-    color: #A84C27;
+    margin-bottom: 10px;
 }
 
-/* =========================================
-BOUTONS
-========================================= */
+.detail-commande-box input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #E5CFC5;
+    background-color: #FFF9F7;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
 
-.filters button,
-.filters input[type="button"] {
+#total {
+    color: #A84C27;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.detail-commande-box button,
+.detail-commande-box input[type="button"] {
     width: 100%;
     background-color: #A84C27;
-    color: white;
+    color: #FFF9F7;
     border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: bold;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
-.filters button:hover,
-.filters input[type="button"]:hover {
+.detail-commande-box button:hover,
+.detail-commande-box input[type="button"]:hover {
     background-color: #74351C;
 }
 
@@ -1513,48 +1503,50 @@ BOUTONS
 MESSAGE CONNEXION
 ========================================= */
 
-.message_connexion {
-    text-align: center;
+.message-connexion {
+    margin-top: 20px;
 }
 
-.message_connexion p {
-    margin-bottom: 25px;
-    line-height: 1.6;
-    color: #5E4B4B;
-}
-
-.message_connexion a {
-    text-decoration: none;
-}
-
-.message_connexion button {
-    margin-bottom: 15px;
+.message-connexion p {
+    color: #74351C;
+    margin-bottom: 20px;
+    line-height: 1.5;
 }
 
 /* =========================================
 RESPONSIVE
 ========================================= */
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1400px) {
 
-    main {
+    .detail-layout {
         flex-direction: column;
-        padding: 30px 20px;
     }
 
-    .pub-content h1 {
-        font-size: 32px;
+    .detail-main-card,
+    .detail-commande-box {
+        width: 100%;
     }
 
-    .pub-content img {
-        height: 250px;
+    .detail-plats-container {
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
-    .filters {
-        position: static;
+}
+
+@media screen and (max-width: 768px) {
+
+    .detail-layout {
+        padding: 25px;
     }
 
-    .detail h3 {
-        font-size: 24px;
+    .detail-main-image {
+        height: 260px;
     }
+
+    .detail-plat-card {
+        width: 100%;
+    }
+
 }

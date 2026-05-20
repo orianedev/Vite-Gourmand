@@ -75,7 +75,6 @@ $utilisateur_connecte = isset($_SESSION['user']);
 
 <?php include("../includes/header.php"); ?>
 
-<main>
 
     <div class="pub">
 
@@ -89,33 +88,43 @@ $utilisateur_connecte = isset($_SESSION['user']);
                 <?php echo $menu['description']; ?>
             </p>
 
-            <img
-                src="<?php echo $menu['image']; ?>"
-                alt="image menu"
-                width="500"
-            >
-
-            <h2>
-                <?php echo $menu['prix_par_personne']; ?> € / personne
-            </h2>
-
-            <p>
-                Minimum :
-                <?php echo $menu['nombre_personne_minimum']; ?>
-                personnes
-            </p>
 
         </div>
 
     </div>
 
+<main class="detail-layout">
+
+    <div class="detail-main-card">
+
+    <img
+        src="<?php echo $menu['image']; ?>"
+        alt="image menu"
+        class="detail-main-image"
+    >
+
+    <div class="detail-main-infos">
+
+        <h2>
+            <?php echo $menu['prix_par_personne']; ?> € / personne
+        </h2>
+
+        <p>
+            Minimum :
+            <?php echo $menu['nombre_personne_minimum']; ?>
+            personnes
+        </p>
+
+    </div>
+
+</div>
 
 
-   <div class="Carte_menu">
+   <div class="detail-plats-container">
 
     <?php foreach ($plats as $plat) { ?>
 
-        <div class="detail">
+        <div class="detail-plat-card">
 
             <h2>
                 <?php echo ucfirst($plat['categorie']); ?>
@@ -136,7 +145,7 @@ $utilisateur_connecte = isset($_SESSION['user']);
 
 
 
-    <aside class="filters">
+    <aside class="detail-commande-box">
 
         <form action="" method="GET">
 
