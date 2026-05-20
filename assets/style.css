@@ -58,7 +58,7 @@ body {
 .pub {
   position: relative;
   height: 250px;
-  background-image: url("../Sources/Fond page d'accueil.jpeg");
+  background-image: url("../Sources/hero.jpeg");
   background-size: cover;
   background-position: center;
   display: flex;
