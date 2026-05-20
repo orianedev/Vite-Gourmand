@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
 
-        <main>
+        <main class="espace_commande">
             <div class="infos">
                 <h2> Informations personnelles </h2>
                 <div class="infos-content">
@@ -105,37 +105,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label for="name"> Nom :</label>
                             <input type="text" name="nom" value="<?= $user["nom"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="firstname"> Prénom :</label>
                             <input type="text" name="prenom" value="<?= $user["prenom"] ?>" required>
                          </div>
-                         <br>
+                         
                          <div> 
                             <label for="email"> Email : </label>
                             <input type="email" name="email" value="<?= $user["email"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="Num"> Numéro de téléphone :</label>
                             <input type="text" name="telephone" value="<?= $user["telephone"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="adress"> Adresse postale : </label>
                             <input type="text" name="adresse_postale" value="<?= $user["adresse_postale"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="city"> Ville : </label>
                             <input type="text" name="ville" value="<?= $user["ville"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="postal-code"> Code postal :</label>
                             <input type="text" name="code_postal" value="<?= $user["code_postal"] ?>" required>
                         </div>
-                        <br>
+                        
                         <div>
                             <label for="time"> Date et heure de livraison </label>
                             <input id="time" name="time" type="datetime"> 
@@ -172,29 +172,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="number" id="nb_personne" name="nombre_personne" min="1" required>
                     <p id="totalMenu"></p>
                     
-                    <br><br>
+                    
                     
                     <label>Date de prestation :</label>
                     <input type="date" id="date" name="date_prestation" required>
-                    
-                    <br><br>
+                        
                     
                     <label>Heure de livraison :</label>
                     <input type="time" id="heure" name="heure_livraison" required>
                     
-                    <br><br>
                     
                     <input type="submit" value="Valider commande">
                 </form>
             </div>
 
-            <div>
-                <a href="Detail_menus.php?id=1">Voir détails</a>
-            </div>
-
-        </main>
-
-    <aside>
+            <aside class="aside_espace_commande">
         <h2>Résumé de ma commande</h2>
         
         <p>Menu : <span id="resume_menu">-</span></p>
@@ -206,6 +198,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><strong>Total : <span id="resume_total">0€</span></strong></p>
     
     </aside>
+
+        </main>
+
 
        <?php include("../includes/footer.php"); ?>
    

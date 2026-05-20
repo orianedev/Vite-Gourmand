@@ -16,7 +16,7 @@ $user = $sqlUser->fetch();
 
 
 $sqlCmd = $pdo->prepare("
-    SELECT c.*, m.titre 
+    SELECT c.*, m.titre, m.image
     FROM commande c
     JOIN menu m ON c.menu_id = m.menu_id
     WHERE c.utilisateur_id = ?
@@ -42,7 +42,9 @@ if (isset($_POST["envoyer_avis"])) {
         $user_id
     ]);
 
-    $message = "Avis envoyé !";
+    $message = "Avis envoyé !"; 
+
+}
 
     if (isset($_POST["update_user"])) {
 
@@ -74,7 +76,7 @@ if (isset($_POST["envoyer_avis"])) {
 
     $message = "Informations mises à jour !";
 }
-}
+
 ?>
 
 <!DOCTYPE html> 
@@ -110,6 +112,10 @@ if (isset($_POST["envoyer_avis"])) {
         <?= date("d/m/Y", strtotime($cmd["date_prestation"])) ?>
         à <?= substr($cmd["heure_livraison"], 0, 5) ?>
       </p>
+
+      <p>Total :
+<?= $cmd["prix_menu"] + $cmd["prix_livraison"] ?> €
+</p>
 
     <p><?= $cmd["nombre_personne"] ?> personnes</p>
 
@@ -159,61 +165,60 @@ if (isset($_POST["envoyer_avis"])) {
           <div class="info-row">
             <span class="label">Nom :</span>
            <span class="value" name="nom" id="nomText"><?= $user["nom"] ?></span>
-           <input type="text" id="nomInput" value="<?= $user["nom"] ?>" class="hidden">
+           <input type="text" name="nom" id="nomInput" value="<?= $user["nom"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
             <span class="label">Prénom :</span>
            <span class="value" name="prenom" id="prenomText"><?= $user["prenom"] ?></span>
-           <input type="text" id="prenomInput" value="<?= $user["prenom"] ?>" class="hidden">
+           <input type="text" name="prenom" id="prenomInput" value="<?= $user["prenom"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
            <span class="label">Email :</span>
            <span class="value" name="email" id="emailText"><?= $user["email"] ?></span>
-           <input type="email" id="emailInput" value="<?= $user["email"] ?>" class="hidden">
+           <input type="email" name="email" id="emailInput" value="<?= $user["email"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
             <span class="label">Téléphone :</span>
             <span class="value" name="telephone" id="telText"> <?= $user["telephone"] ?></span>
-            <input type="text" id="telInput" value="<?= $user["telephone"] ?>" class="hidden">
+            <input type="text" name = "telephone" id="telInput" value="<?= $user["telephone"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
             <span class="label"> Adresse :</span>
-            <span class="value" name="adresse" id="adresse"> <?= $user["adresse_postale"] ?></span>
-            <input type="text" id="adresse" value="<?= $user["adresse_postale"] ?>" class="hidden">
+            <span class="value" name="adresse_postale" id="adresse_postale"> <?= $user["adresse_postale"] ?></span>
+            <input type="text" name="adresse_postale" id="adresse_postale" value="<?= $user["adresse_postale"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
             <span class="label">Ville :</span>
             <span class="value" name="ville" id="ville"> <?= $user["ville"] ?></span>
-            <input type="text" id="ville" value="<?= $user["ville"] ?>" class="hidden">
+            <input type="text" name="ville" id="ville" value="<?= $user["ville"] ?>" class="hidden">
           </div>
 
           <div class="info-row">
             <span class="label">Code postal :</span>
             <span class="value" name="code_postal" id="cp"> <?= $user["code_postal"] ?></span>
-            <input type="text" id="code_postal" value="<?= $user["code_postal"] ?>" class="hidden">
+            <input type="text" name="code_postal" id="code_postal" value="<?= $user["code_postal"] ?>" class="hidden">
           </div>
 
           <div class="actions">
-            <button class="btn-primary" id="editBtn"> Modifier </button>
-            <button class="btn-primary hidden" id="saveBtn">Enregistrer</button>
-            <button class="btn-secondary hidden" id="cancelBtn">Annuler</button>
+            <button type="button" class="btn-primary" id="editBtn"> Modifier</button>
+            <button type="submit" name="update_user" class="btn-primary hidden" id="saveBtn"> Enregistrer </button>
+            <button type="button" class="btn-secondary hidden" id="cancelBtn"> Annuler </button>
           </div>
 
         </form>
 
-<
         
       </article>
   
 
       <ul> 
       <li class="active"> <button class="btn-primary"> Mes commandes </button> </li>
-      <li><button class="btn-primary"> Se déconnecter </button> </li>
+      <li> <a href="logout.php" class="btn-primary"> Se déconnecter </a> </li>
       </ul>
     </aside>
 
@@ -228,4 +233,48 @@ if (isset($_POST["envoyer_avis"])) {
     
 
 </body>
+
+<script>
+
+const editBtn = document.getElementById("editBtn");
+const saveBtn = document.getElementById("saveBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+
+editBtn.addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    document.querySelectorAll(".value").forEach(el => {
+        el.classList.add("hidden");
+    });
+
+    document.querySelectorAll("input").forEach(el => {
+        el.classList.remove("hidden");
+    });
+
+    editBtn.classList.add("hidden");
+    saveBtn.classList.remove("hidden");
+    cancelBtn.classList.remove("hidden");
+
+});
+
+cancelBtn.addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    document.querySelectorAll(".value").forEach(el => {
+        el.classList.remove("hidden");
+    });
+
+    document.querySelectorAll("input").forEach(el => {
+        el.classList.add("hidden");
+    });
+
+    editBtn.classList.remove("hidden");
+    saveBtn.classList.add("hidden");
+    cancelBtn.classList.add("hidden");
+
+});
+
+</script>
 </html>

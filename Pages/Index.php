@@ -117,11 +117,12 @@
 
                     <p> <?= $client["texte"] ?> </p>
                     <span> <?= $client["client"] ?> </span>
-             
+                
+            </div>
                     <?php 
                      }
                     ?>
-                </div>
+            
             
                 </div>
             </div>

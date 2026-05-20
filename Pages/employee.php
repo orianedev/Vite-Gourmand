@@ -18,14 +18,27 @@ if ($_SESSION["user"]["role_id"] != 2) {
 }
 
 
-$name = $_GET["Name"] ?? "";
+$name = $_GET["name"] ?? "";
 $statut = $_GET["statut"] ?? "";
+$section = $_GET["section"] ?? "commandes";
 
 $sql = "
-SELECT commande.*, utilisateur.nom, utilisateur.prenom, utilisateur.email, utilisateur.telephone
+SELECT 
+commande.*, 
+utilisateur.nom, 
+utilisateur.prenom, 
+utilisateur.email, 
+utilisateur.telephone,
+menu.titre
+
 FROM commande
+
 INNER JOIN utilisateur
 ON commande.utilisateur_id = utilisateur.utilisateur_id
+
+INNER JOIN menu
+ON commande.menu_id = menu.menu_id
+
 WHERE 1
 ";
 
@@ -45,10 +58,6 @@ if (!empty($statut)) {
 
 $sql .= " ORDER BY commande.date_commande DESC";
 
-$request = $pdo->prepare($sql);
-$request->execute($params);
-
-$commandes = $request->fetchAll();
 
 
 if (isset($_POST["update_status"])) {
@@ -150,12 +159,17 @@ $menus = $pdo->query("
 
 
 
-$avis = $pdo->query("
+$avisRequest = $pdo->prepare("
     SELECT avis.*, utilisateur.nom
     FROM avis
     INNER JOIN utilisateur
     ON avis.utilisateur_id = utilisateur.utilisateur_id
-")->fetchAll();
+    WHERE avis.etat = ?
+");
+
+$avisRequest->execute(['en_attente']);
+
+$avis = $avisRequest->fetchAll();
 
 
 if (isset($_POST["validate_review"])) {
@@ -164,27 +178,29 @@ if (isset($_POST["validate_review"])) {
 
     $update = $pdo->prepare("
         UPDATE avis
-        SET statut = 'valide'
+        SET etat = 'valide'
         WHERE avis_id = ?
     ");
 
     $update->execute([$avis_id]);
 }
-
 
 if (isset($_POST["delete_review"])) {
 
     $avis_id = intval($_POST["avis_id"]);
 
-    $update = $pdo->prepare("
-        UPDATE avis
-        SET statut = 'refuse'
+    $delete = $pdo->prepare("
+        DELETE FROM avis
         WHERE avis_id = ?
     ");
 
-    $update->execute([$avis_id]);
+    $delete->execute([$avis_id]);
 }
 
+$request = $pdo->prepare($sql);
+$request->execute($params);
+
+$commandes = $request->fetchAll();
 ?>
 
 <!DOCTYPE html> 
@@ -199,16 +215,7 @@ if (isset($_POST["delete_review"])) {
 
 <body>
     
-    <header class="navbar">
-        <img src="../Sources/Logo.jpeg" width="50"height="50" alt="Logo">
-
-         <navbar> <a href="../Index.html"> Accueil </a>
-         <a href="Menus.html"> Menus </a>
-         <a href="Contact.php"> Contacts </a>
-         <div class="login"> <a href="login.html"> Connexion </a> </div>
-        </navbar>
-
-    </header>
+    <?php include("../includes/header.php"); ?>
 
     <div class="pub"> 
                 <div class="pub-content">
@@ -218,9 +225,11 @@ if (isset($_POST["delete_review"])) {
 
 <main class="dashboard"> 
 
+<?php if($section === "commandes") : ?>
     <aside class="employee_filters">
         <h3> Filtrer par : </h3>
         <form action="" method="GET">
+            <input type="hidden" name="section" value="commandes">
           <div class="filter">
             <label for="name"> Nom du client </label>
             <input name="name" id="name" type="text">
@@ -235,16 +244,19 @@ if (isset($_POST["delete_review"])) {
                 <option> Livrée </option>
                 <option> Terminée </option>
                 <option> En attente de restitution du matériel </option>
+                <option> En prépration </option>
             </select>
           </div>
+          <button type="submit" class="btn-primary"> Filtrer </button>
+        </form>
     </aside>
+<?php endif; ?>
 
 
       <section class="content">
-        <h2> Commandes </h2>
-
+      <?php if($section === "commandes") : ?>
       <?php foreach($commandes as $commande) : ?>
-
+        <h2> Commandes </h2>
 <article class="order-card">
 
     <h3><?= htmlspecialchars($commande["numero_commande"]) ?></h3>
@@ -258,6 +270,8 @@ if (isset($_POST["delete_review"])) {
 
     <p><?= htmlspecialchars($commande["nombre_personne"]) ?> personnes</p>
 
+    <p class="menu_name"> Menu : <?= htmlspecialchars($commande["titre"]) ?> </p>
+    
     <p><?= htmlspecialchars($commande["telephone"]) ?></p>
 
     <p><?= htmlspecialchars($commande["email"]) ?></p>
@@ -315,14 +329,23 @@ if (isset($_POST["delete_review"])) {
 
             <select name="new_status">
 
-                <option>Acceptée</option>
-                <option>En préparation</option>
-                <option>En cours de livraison</option>
-                <option>Livrée</option>
-                <option>En attente de restitution du matériel</option>
-                <option>Terminée</option>
+    <option value="Acceptée">Acceptée</option>
 
-            </select>
+    <option value="En préparation">En préparation</option>
+
+    <option value="En cours de livraison">
+        En cours de livraison
+    </option>
+
+    <option value="Livrée">Livrée</option>
+
+    <option value="En attente de restitution du matériel">
+        En attente de restitution du matériel
+    </option>
+
+    <option value="Terminée">Terminée</option>
+
+</select>
 
             <button class="btn-primary"
                     type="submit"
@@ -336,21 +359,24 @@ if (isset($_POST["delete_review"])) {
 </article>
 
 <?php endforeach; ?>
+<?php endif; ?>
 
+<?php if($section === "menus") : ?>
 <?php foreach($menus as $menu) : ?>
-
+<h2> Menu </h2>
 <article class="menu">
 
+
     <img src="<?= htmlspecialchars($menu["image"]) ?>"
-         alt="<?= htmlspecialchars($menu["nom"]) ?>">
+         alt="<?= htmlspecialchars($menu["titre"]) ?>">
 
     <div class="card-content">
 
-        <h2><?= htmlspecialchars($menu["nom"]) ?></h2>
+        <h2><?= htmlspecialchars($menu["titre"]) ?></h2>
 
         <p>
             à partir de :
-            <?= htmlspecialchars($menu["prix"]) ?> €
+            <?= htmlspecialchars($menu["prix_par_personne"]) ?> €
         </p>
 
         <p><?= htmlspecialchars($menu["description"]) ?></p>
@@ -379,18 +405,14 @@ if (isset($_POST["delete_review"])) {
 </article>
 
 <?php endforeach; ?>
-    
+<?php endif; ?>
+
+<?php if($section === "avis") : ?>
+<?php foreach($avis as $review) : ?>
+    <h2> Avis</h2>
+
 <div class="review_employee "> 
-          <h4> Valider les avis </h4>
-          <div class="stars"> 
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-          </div>
-         <?php foreach($avis as $review) : ?>
-          
+    
           <p><?= htmlspecialchars($review["nom"]) ?></p>
           <p><?= htmlspecialchars($review["description"]) ?></p>
           <p>Note : <?= htmlspecialchars($review["note"]) ?>/5</p>
@@ -403,7 +425,7 @@ if (isset($_POST["delete_review"])) {
                    value="<?= $review["avis_id"] ?>">
                    <button class="btn-primary"
                     type="submit"
-                    name="validate_review"> Valider l'avis /form
+                    name="validate_review"> Valider l'avis
                   </button>
           </form>
           
@@ -422,47 +444,47 @@ if (isset($_POST["delete_review"])) {
           </form>
 
         </div>
-
 </div>
-
 <?php endforeach; ?>
+<?php endif; ?>
+
           </div>
     
       </section>
     
 
-    <aside class="sidebar">
-      <ul> 
-      <li class="active"> <button class="btn-primary"> Commandes </button> </li>
-      <li><button class="btn-primary"> Menus </button> </li>
-      <li><button class="btn-primary"> Avis </button></li>
-      </ul>
-    </aside>
+<aside class="sidebar">
 
+    <ul>
+
+        <li>
+            <a href="?section=commandes" class="btn-primary">
+                Commandes
+            </a>
+        </li>
+
+        <li>
+            <a href="?section=menus" class="btn-primary">
+                Menus
+            </a>
+        </li>
+
+        <li>
+            <a href="?section=avis" class="btn-primary">
+                Avis
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
 
       </div>
     </main>
 
 
 
-    <footer> 
-
-                <div class="horaires">
-                    <h2> Horaires :</h2>
-                    <div class="horaires-content"> 
-                        <p> Lundi - Vendredi : 9h00 - 18h00</p>
-                        <p> Samedi : 9h00 - 13h00 </p>
-                        <span> Prestations évenementielles disponibles en dehors de ces horaires sur réservation.</span>
-                    </div>
-                </div>
-
-                <div class="mentions">
-                <a href="mentions_legales.php"> Mentions légales</a>
-                <a href="Conditions_de_ventes.php"> Conditions générales de vente </a>
-                </div>
-                
-        
-            </footer>
+    <?php include("../includes/footer.php"); ?>
 
     
 
